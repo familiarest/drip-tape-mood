@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#070709">
+  <meta name="description" content="Музыка и короткий ритуал заваривания дрип-кофе.">
+  <title>DRIP TAPE — настроение в чашке</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23070709'/%3E%3Crect x='12' y='17' width='40' height='30' rx='6' fill='%23ff5dc8'/%3E%3Ccircle cx='24' cy='32' r='7' fill='%23070709'/%3E%3Ccircle cx='40' cy='32' r='7' fill='%23070709'/%3E%3Cpath d='M23 42h18' stroke='%23070709' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@500;600;700&display=swap');
+
+    :root {
+      color-scheme: dark;
+      --bg: #070709;
+      --surface: rgba(18, 18, 22, .72);
+      --surface-strong: rgba(24, 24, 30, .88);
+      --line: rgba(255, 255, 255, .11);
+      --muted: rgba(255, 255, 255, .6);
+      --text: #f7f6fb;
+      --a: #54f0a9;
+      --b: #0f766e;
+      --c: #c7ff70;
+      --glow: rgba(68, 238, 161, .28);
+      --radius: 28px;
+    }
+
+    * { box-sizing: border-box; }
+    html { background: var(--bg); scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      min-height: 100vh;
+      color: var(--text);
+      background: var(--bg);
+      font-family: Manrope, system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    button, textarea { font: inherit; }
+    button { color: inherit; }
+
+    .mesh {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+      background: radial-gradient(circle at 50% -10%, rgba(255,255,255,.06), transparent 34%);
+    }
+    .mesh i {
+      position: absolute;
+      border-radius: 999px;
+      filter: blur(72px);
+      opacity: .62;
+      transition: background 900ms ease, transform 900ms ease;
+      will-change: transform;
+    }
+    .mesh i:nth-child(1) { width: 65vw; height: 65vw; left: -26vw; top: 6vh; background: var(--a); animation: drift-one 15s ease-in-out infinite alternate; }
+    .mesh i:nth-child(2) { width: 62vw; height: 62vw; right: -30vw; top: 28vh; background: var(--b); animation: drift-two 18s ease-in-out infinite alternate; }
+    .mesh i:nth-child(3) { width: 44vw; height: 44vw; left: 32vw; bottom: -25vw; background: var(--c); opacity: .32; animation: drift-three 20s ease-in-out infinite alternate; }
+    @keyframes drift-one { to { transform: translate(18vw, 12vh) scale(1.12); } }
+    @keyframes drift-two { to { transform: translate(-18vw, -12vh) scale(.92); } }
+    @keyframes drift-three { to { transform: translate(-14vw, -18vh) scale(1.18); } }
+
+    .noise {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      opacity: .05;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+    }
+
+    .app { position: relative; z-index: 2; width: min(1180px, 100%); margin: 0 auto; padding: 22px clamp(18px, 4vw, 54px) 130px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; min-height: 48px; }
+    .brand { display: flex; align-items: center; gap: 12px; font-family: Unbounded, sans-serif; font-size: .8rem; letter-spacing: .04em; }
+    .brand-mark { width: 36px; height: 28px; display: grid; grid-template-columns: 1fr 1fr; place-items: center; border: 1px solid var(--line); border-radius: 9px; background: rgba(0,0,0,.3); box-shadow: inset 0 0 0 4px rgba(255,255,255,.035); }
+    .brand-mark::before, .brand-mark::after { content: ''; width: 7px; aspect-ratio: 1; border: 2px solid currentColor; border-radius: 50%; opacity: .8; }
+    .edition { color: var(--muted); font-size: .75rem; letter-spacing: .12em; text-transform: uppercase; }
+
+    .screen { min-height: calc(100vh - 92px); padding-top: clamp(8vh, 12vh, 128px); }
+    .screen[hidden] { display: none; }
+    .eyebrow { margin: 0 0 18px; color: rgba(255,255,255,.64); font-size: .76rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+    h1 { max-width: 850px; margin: 0; font-family: Unbounded, sans-serif; font-size: clamp(2.5rem, 7vw, 6.5rem); line-height: .98; letter-spacing: -.055em; text-wrap: balance; }
+    .lead { max-width: 580px; margin: 24px 0 34px; color: rgba(255,255,255,.7); font-size: clamp(1rem, 2vw, 1.2rem); line-height: 1.55; }
+
+    .moods { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .mood {
+      position: relative;
+      min-height: 168px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: space-between;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: rgba(12, 12, 15, .63);
+      backdrop-filter: blur(18px);
+      cursor: pointer;
+      text-align: left;
+      transition: transform 240ms ease, border-color 240ms ease, background 240ms ease;
+    }
+    .mood::after { content: ''; position: absolute; width: 110px; height: 110px; right: -30px; bottom: -40px; border-radius: 50%; background: var(--mood); filter: blur(30px); opacity: .6; transition: transform 300ms ease; }
+    .mood:hover, .mood:focus-visible { transform: translateY(-5px); border-color: rgba(255,255,255,.26); background: rgba(24,24,29,.74); outline: none; }
+    .mood:hover::after { transform: scale(1.4); }
+    .mood-num { color: var(--muted); font-size: .75rem; }
+    .mood strong { position: relative; z-index: 1; max-width: 130px; font-size: 1.08rem; line-height: 1.15; }
+    .mood-arrow { position: relative; z-index: 1; align-self: flex-end; width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 50%; }
+
+    .experience { padding-top: 42px; }
+    .experience-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; margin-bottom: 22px; }
+    .experience h1 { font-size: clamp(2.3rem, 5vw, 4.8rem); }
+    .back { flex: 0 0 auto; padding: 12px 15px; border: 1px solid var(--line); border-radius: 999px; background: rgba(12,12,15,.45); cursor: pointer; backdrop-filter: blur(12px); }
+    .back:hover { background: rgba(255,255,255,.09); }
+
+    .ritual-card { border: 1px solid var(--line); border-radius: var(--radius); background: linear-gradient(145deg, rgba(22,22,27,.87), rgba(10,10,13,.68)); backdrop-filter: blur(26px); box-shadow: 0 24px 70px rgba(0,0,0,.28); overflow: hidden; }
+    .ritual-top { display: flex; justify-content: space-between; gap: 20px; padding: 22px 24px 18px; border-bottom: 1px solid var(--line); }
+    .ritual-title { font-weight: 700; }
+    .ritual-meta { color: var(--muted); font-size: .88rem; }
+    .steps { display: grid; grid-template-columns: repeat(4, 1fr); }
+    .step { position: relative; padding: 22px 18px 24px; border: 0; border-right: 1px solid var(--line); background: transparent; text-align: left; cursor: pointer; opacity: .44; transition: opacity 220ms ease, background 220ms ease; }
+    .step:last-child { border-right: 0; }
+    .step.active, .step.done { opacity: 1; }
+    .step.active { background: linear-gradient(180deg, color-mix(in srgb, var(--a) 11%, transparent), transparent); }
+    .step-index { width: 30px; height: 30px; display: grid; place-items: center; margin-bottom: 42px; border: 1px solid var(--line); border-radius: 50%; font-size: .75rem; }
+    .step.done .step-index { color: #07120d; border-color: transparent; background: var(--a); }
+    .step h3 { margin: 0 0 8px; font-size: .95rem; }
+    .step p { margin: 0; color: var(--muted); font-size: .8rem; line-height: 1.45; }
+
+    .content-grid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(300px, .78fr); gap: 16px; margin-top: 16px; }
+    .player, .playlist { border: 1px solid var(--line); border-radius: var(--radius); background: rgba(14,14,18,.75); backdrop-filter: blur(24px); }
+    .player { min-height: 420px; padding: clamp(18px, 4vw, 30px); display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; }
+    .cover { position: relative; min-height: 225px; overflow: hidden; border-radius: 22px; background: linear-gradient(135deg, var(--a), var(--b) 52%, var(--c)); box-shadow: 0 30px 90px var(--glow); }
+    .cover::before, .cover::after { content: ''; position: absolute; border-radius: 50%; filter: blur(28px); animation: cover-drift 9s ease-in-out infinite alternate; }
+    .cover::before { width: 70%; height: 115%; left: -10%; top: -40%; background: color-mix(in srgb, var(--c) 72%, transparent); }
+    .cover::after { width: 64%; height: 100%; right: -12%; bottom: -38%; background: color-mix(in srgb, var(--a) 68%, black); animation-delay: -4s; }
+    @keyframes cover-drift { to { transform: translate(32%, 22%) scale(1.12) rotate(18deg); } }
+    .cover-label { position: absolute; z-index: 2; inset: 18px; display: flex; flex-direction: column; justify-content: space-between; }
+    .tape-side { font: 600 .69rem/1 Unbounded, sans-serif; letter-spacing: .12em; text-transform: uppercase; }
+    .cover-label strong { max-width: 340px; font: 600 clamp(1.7rem, 4vw, 3.5rem)/.96 Unbounded, sans-serif; letter-spacing: -.05em; }
+    .track-line { display: grid; grid-template-columns: auto 1fr auto; gap: 16px; align-items: center; margin-top: 24px; }
+    .play { width: 56px; height: 56px; display: grid; place-items: center; border: 0; border-radius: 50%; background: #fff; color: #0a0a0c; cursor: pointer; box-shadow: 0 8px 30px rgba(255,255,255,.13); }
+    .play svg { width: 20px; fill: currentColor; }
+    .track-copy strong { display: block; font-size: 1rem; }
+    .track-copy span { color: var(--muted); font-size: .78rem; }
+    .time { color: var(--muted); font-variant-numeric: tabular-nums; font-size: .78rem; }
+    .progress { grid-column: 2 / 4; width: 100%; height: 4px; border-radius: 999px; background: rgba(255,255,255,.14); cursor: pointer; overflow: hidden; }
+    .progress b { display: block; width: 0%; height: 100%; border-radius: inherit; background: #fff; }
+
+    .playlist { padding: 22px; }
+    .playlist h2 { margin: 0 0 18px; font: 600 1rem/1.2 Unbounded, sans-serif; }
+    .track-item { width: 100%; display: grid; grid-template-columns: 42px 1fr auto; align-items: center; gap: 12px; padding: 11px; border: 0; border-radius: 14px; background: transparent; text-align: left; cursor: pointer; }
+    .track-item:hover, .track-item.current { background: rgba(255,255,255,.07); }
+    .track-art { width: 42px; aspect-ratio: 1; border-radius: 11px; background: linear-gradient(135deg, var(--x), var(--y)); }
+    .track-item strong { display: block; font-size: .84rem; }
+    .track-item small { color: var(--muted); font-size: .7rem; }
+    .track-duration { color: var(--muted); font-size: .72rem; }
+    .actions { display: grid; gap: 9px; margin-top: 22px; }
+    .action { width: 100%; padding: 14px 16px; border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,.04); cursor: pointer; text-align: left; }
+    .action:hover { background: rgba(255,255,255,.08); }
+
+    .sheet { position: fixed; inset: 0; z-index: 10; display: grid; align-items: end; background: rgba(0,0,0,.58); backdrop-filter: blur(12px); opacity: 0; pointer-events: none; transition: opacity 240ms ease; }
+    .sheet.open { opacity: 1; pointer-events: auto; }
+    .sheet-panel { width: min(680px, 100%); max-height: 86vh; margin: 0 auto; padding: 26px clamp(20px, 5vw, 42px) calc(28px + env(safe-area-inset-bottom)); overflow: auto; border: 1px solid var(--line); border-bottom: 0; border-radius: 30px 30px 0 0; background: #111115; transform: translateY(30px); transition: transform 240ms ease; }
+    .sheet.open .sheet-panel { transform: translateY(0); }
+    .sheet-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+    .sheet h2 { margin: 0; font: 600 clamp(1.5rem, 5vw, 2.3rem)/1.1 Unbounded, sans-serif; letter-spacing: -.04em; }
+    .close { width: 40px; height: 40px; border: 1px solid var(--line); border-radius: 50%; background: transparent; cursor: pointer; }
+    .facts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 24px 0; }
+    .fact { padding: 16px; border: 1px solid var(--line); border-radius: 16px; }
+    .fact small { display: block; margin-bottom: 6px; color: var(--muted); }
+    .sheet-copy { color: rgba(255,255,255,.76); line-height: 1.65; }
+    .rating { display: flex; gap: 8px; margin: 22px 0; }
+    .star { width: 46px; height: 46px; border: 1px solid var(--line); border-radius: 13px; background: transparent; font-size: 1.25rem; cursor: pointer; }
+    .star.selected { color: #ffd057; background: rgba(255,208,87,.12); border-color: rgba(255,208,87,.45); }
+    textarea { width: 100%; min-height: 120px; padding: 15px; color: #fff; border: 1px solid var(--line); border-radius: 15px; background: rgba(255,255,255,.045); resize: vertical; outline: none; }
+    textarea:focus { border-color: rgba(255,255,255,.35); }
+    .submit { width: 100%; margin-top: 12px; padding: 15px; border: 0; border-radius: 15px; background: #fff; color: #08080a; font-weight: 800; cursor: pointer; }
+    .toast { position: fixed; z-index: 20; left: 50%; bottom: 26px; padding: 13px 18px; border: 1px solid var(--line); border-radius: 999px; background: #18181d; transform: translate(-50%, 120px); transition: transform 260ms ease; white-space: nowrap; box-shadow: 0 12px 40px rgba(0,0,0,.4); }
+    .toast.show { transform: translate(-50%, 0); }
+
+    @media (max-width: 820px) {
+      .moods { grid-template-columns: 1fr 1fr; }
+      .content-grid { grid-template-columns: 1fr; }
+      .steps { grid-template-columns: 1fr 1fr; }
+      .step:nth-child(2) { border-right: 0; }
+      .step:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+      .player { min-height: auto; }
+    }
+    @media (max-width: 520px) {
+      .app { padding-inline: 14px; }
+      .edition { display: none; }
+      .screen { padding-top: 8vh; }
+      .moods { grid-template-columns: 1fr; }
+      .mood { min-height: 104px; }
+      .mood strong { max-width: none; }
+      .experience { padding-top: 24px; }
+      .experience-head { align-items: flex-start; }
+      .steps { grid-template-columns: 1fr; }
+      .step { display: grid; grid-template-columns: 36px 1fr; column-gap: 12px; padding: 15px; border-right: 0; border-bottom: 1px solid var(--line); }
+      .step:last-child { border-bottom: 0; }
+      .step-index { grid-row: 1 / 3; margin: 0; }
+      .step h3 { align-self: end; }
+      .facts { grid-template-columns: 1fr; }
+      .cover { min-height: 240px; }
+      .track-line { grid-template-columns: auto 1fr; }
+      .time { display: none; }
+      .progress { grid-column: 2; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="mesh" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="noise" aria-hidden="true"></div>
+  <main class="app">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark"></span><span>DRIP TAPE</span></div>
+      <div class="edition">SIDE A · 01/04</div>
+    </header>
+
+    <section class="screen" id="moodScreen">
+      <p class="eyebrow">Сначала — ты. Потом — кофе.</p>
+      <h1>Как ты себя сейчас чувствуешь?</h1>
+      <p class="lead">Выбери настроение. Мы подберём звук, цвет и проведём тебя через короткий ритуал заваривания.</p>
+      <div class="moods" id="moods"></div>
+    </section>
+
+    <section class="screen experience" id="experienceScreen" hidden>
+      <div class="experience-head">
+        <div><p class="eyebrow">Твоё настроение</p><h1 id="moodTitle">Тихое утро</h1></div>
+        <button class="back" id="backBtn" type="button">← Сменить</button>
+      </div>
+
+      <section class="ritual-card" aria-labelledby="ritualTitle">
+        <div class="ritual-top">
+          <div><div class="ritual-title" id="ritualTitle">Завариваем вместе</div><div class="ritual-meta">Дрип 12 г · вода 200 мл · 92–94 °C</div></div>
+          <div class="ritual-meta" id="stepStatus">Шаг 1 из 4</div>
+        </div>
+        <div class="steps" id="steps"></div>
+      </section>
+
+      <div class="content-grid">
+        <section class="player" aria-label="Музыкальный плеер">
+          <div class="cover"><div class="cover-label"><span class="tape-side">DRIP SESSION · SIDE A</span><strong id="coverTitle">Between Leaves</strong></div></div>
+          <div class="track-line">
+            <button class="play" id="playBtn" type="button" aria-label="Воспроизвести">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path id="playIcon" d="M8 5v14l11-7z"/></svg>
+            </button>
+            <div class="track-copy"><strong id="trackTitle">Between Leaves</strong><span id="trackArtist">Drip Tape Radio</span></div>
+            <div class="time"><span id="timeNow">0:00</span> / <span id="timeTotal">3:42</span></div>
+            <div class="progress" id="progress" role="slider" aria-label="Позиция трека" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0"><b></b></div>
+          </div>
+        </section>
+
+        <aside class="playlist">
+          <h2>Твоя кассета</h2>
+          <div id="playlist"></div>
+          <div class="actions">
+            <button class="action" type="button" data-sheet="coffee">Узнать больше о кофе →</button>
+            <button class="action" type="button" data-sheet="review">Оставить отзыв →</button>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <div class="sheet" id="coffeeSheet" aria-hidden="true">
+    <div class="sheet-panel" role="dialog" aria-modal="true" aria-labelledby="coffeeTitle">
+      <div class="sheet-head"><h2 id="coffeeTitle">Эфиопия · Guji</h2><button class="close" type="button" aria-label="Закрыть">✕</button></div>
+      <div class="facts">
+        <div class="fact"><small>Регион</small><strong>Guji, Oromia</strong></div>
+        <div class="fact"><small>Обработка</small><strong>Натуральная</strong></div>
+        <div class="fact"><small>Высота</small><strong>1 900–2 100 м</strong></div>
+        <div class="fact"><small>Во вкусе</small><strong>Персик · какао · чай</strong></div>
+      </div>
+      <p class="sheet-copy">Мягкий и ароматный кофе для неторопливой чашки. В начале — спелый персик, затем лёгкая сладость какао и чистое чайное послевкусие. Данные здесь демонстрационные: заменим их точной карточкой твоего зерна.</p>
+    </div>
+  </div>
+
+  <div class="sheet" id="reviewSheet" aria-hidden="true">
+    <form class="sheet-panel" id="reviewForm">
+      <div class="sheet-head"><h2>Как тебе эта чашка?</h2><button class="close" type="button" aria-label="Закрыть">✕</button></div>
+      <div class="rating" aria-label="Оценка"><button class="star" type="button" data-rate="1">★</button><button class="star" type="button" data-rate="2">★</button><button class="star" type="button" data-rate="3">★</button><button class="star" type="button" data-rate="4">★</button><button class="star" type="button" data-rate="5">★</button></div>
+      <textarea id="reviewText" placeholder="Пара слов о кофе, музыке или настроении…" aria-label="Текст отзыва"></textarea>
+      <button class="submit" type="submit">Отправить отзыв</button>
+    </form>
+  </div>
+  <div class="toast" id="toast" role="status">Спасибо. Отзыв сохранён ♥</div>
+
+  <script>
+    const moods = [
+      { id:'calm', name:'Тихое утро', hint:'спокойствие', track:'Between Leaves', duration:222, colors:['#54f0a9','#0f766e','#c7ff70'], glow:'rgba(68,238,161,.28)', freq:196 },
+      { id:'focus', name:'В потоке', hint:'фокус', track:'Blue Hour', duration:248, colors:['#58a6ff','#223eaa','#50d8ff'], glow:'rgba(59,130,246,.3)', freq:220 },
+      { id:'nostalgia', name:'Тёплые воспоминания', hint:'ностальгия', track:'Last Light', duration:236, colors:['#d29a66','#753f2c','#ffcf8f'], glow:'rgba(204,126,65,.3)', freq:174 },
+      { id:'spark', name:'Искра', hint:'нужен заряд', track:'Pink Voltage', duration:207, colors:['#ff6938','#e32482','#ffb321'], glow:'rgba(255,70,91,.32)', freq:247 }
+    ];
+    const stepsData = [
+      ['Открой', 'Разверни ушки дрипа и поставь его на чашку.'],
+      ['Смочи', 'Влей 40 мл воды и подожди 30 секунд.'],
+      ['Долей', 'Медленно доведи общий объём до 200 мл.'],
+      ['Наслаждайся', 'Сними дрип, перемешай и дай чашке минуту.']
+    ];
+
+    const $ = (s, root=document) => root.querySelector(s);
+    const $$ = (s, root=document) => [...root.querySelectorAll(s)];
+    let selected = moods[0], currentStep = 0, isPlaying = false, elapsed = 0, ticker, audioCtx, osc, gain;
+
+    $('#moods').innerHTML = moods.map((m,i) => `<button class="mood" type="button" data-mood="${m.id}" style="--mood:${m.colors[0]}"><span class="mood-num">0${i+1} · ${m.hint}</span><strong>${m.name}</strong><span class="mood-arrow">↗</span></button>`).join('');
+    $('#steps').innerHTML = stepsData.map((s,i) => `<button class="step ${i===0?'active':''}" type="button" data-step="${i}"><span class="step-index">${i+1}</span><h3>${s[0]}</h3><p>${s[1]}</p></button>`).join('');
+    $('#playlist').innerHTML = moods.map(m => `<button class="track-item" type="button" data-track="${m.id}"><span class="track-art" style="--x:${m.colors[0]};--y:${m.colors[1]}"></span><span><strong>${m.track}</strong><small>${m.name}</small></span><span class="track-duration">${format(m.duration)}</span></button>`).join('');
+
+    function format(seconds) { const n=Math.max(0,Math.floor(seconds)); return `${Math.floor(n/60)}:${String(n%60).padStart(2,'0')}`; }
+    function setTheme(m) {
+      const root=document.documentElement.style;
+      root.setProperty('--a',m.colors[0]); root.setProperty('--b',m.colors[1]); root.setProperty('--c',m.colors[2]); root.setProperty('--glow',m.glow);
+      $('#moodTitle').textContent=m.name; $('#coverTitle').textContent=m.track; $('#trackTitle').textContent=m.track; $('#timeTotal').textContent=format(m.duration);
+      $$('.track-item').forEach(x=>x.classList.toggle('current',x.dataset.track===m.id));
+      $('.edition').textContent=`SIDE A · 0${moods.indexOf(m)+1}/04`;
+    }
+    function openExperience(id) {
+      stopSound(); selected=moods.find(m=>m.id===id); elapsed=0; setTheme(selected); updateProgress();
+      $('#moodScreen').hidden=true; $('#experienceScreen').hidden=false; window.scrollTo({top:0,behavior:'smooth'});
+    }
+    function openMoodPicker() { stopSound(); $('#experienceScreen').hidden=true; $('#moodScreen').hidden=false; window.scrollTo({top:0,behavior:'smooth'}); }
+    function selectStep(index) {
+      currentStep=index;
+      $$('.step').forEach((x,i)=>{ x.classList.toggle('active',i===index); x.classList.toggle('done',i<index); x.querySelector('.step-index').textContent=i<index?'✓':i+1; });
+      $('#stepStatus').textContent=`Шаг ${index+1} из 4`;
+    }
+
+    function ensureSound() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state==='suspended') audioCtx.resume();
+    }
+    function startSound() {
+      ensureSound(); if (osc) return;
+      osc=audioCtx.createOscillator(); gain=audioCtx.createGain();
+      const filter=audioCtx.createBiquadFilter(); filter.type='lowpass'; filter.frequency.value=620;
+      osc.type='triangle'; osc.frequency.value=selected.freq; gain.gain.value=.0001;
+      osc.connect(filter).connect(gain).connect(audioCtx.destination); osc.start();
+      gain.gain.exponentialRampToValueAtTime(.022,audioCtx.currentTime+.8);
+      isPlaying=true; updatePlayIcon();
+      ticker=setInterval(()=>{ elapsed=(elapsed+.25)%selected.duration; updateProgress(); },250);
+    }
+    function stopSound() {
+      clearInterval(ticker);
+      if (gain && audioCtx) gain.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+.12);
+      if (osc) { const old=osc; setTimeout(()=>{try{old.stop()}catch(e){}},150); }
+      osc=null; isPlaying=false; updatePlayIcon();
+    }
+    function updatePlayIcon() { $('#playIcon').setAttribute('d',isPlaying?'M7 5h4v14H7zm6 0h4v14h-4z':'M8 5v14l11-7z'); $('#playBtn').setAttribute('aria-label',isPlaying?'Пауза':'Воспроизвести'); }
+    function updateProgress() { const p=elapsed/selected.duration*100; $('.progress b').style.width=`${p}%`; $('#progress').setAttribute('aria-valuenow',Math.round(p)); $('#timeNow').textContent=format(elapsed); }
+    function seek(clientX) { const r=$('#progress').getBoundingClientRect(); elapsed=Math.min(selected.duration,Math.max(0,(clientX-r.left)/r.width*selected.duration)); updateProgress(); }
+    function openSheet(id) { const el=$(`#${id}Sheet`); el.classList.add('open'); el.setAttribute('aria-hidden','false'); setTimeout(()=>$('.close',el).focus(),100); }
+    function closeSheet(el) { el.classList.remove('open'); el.setAttribute('aria-hidden','true'); }
+
+    $('#moods').addEventListener('click',e=>{ const b=e.target.closest('[data-mood]'); if(b) openExperience(b.dataset.mood); });
+    $('#backBtn').addEventListener('click',openMoodPicker);
+    $('#steps').addEventListener('click',e=>{ const b=e.target.closest('[data-step]'); if(b) selectStep(+b.dataset.step); });
+    $('#playBtn').addEventListener('click',()=>isPlaying?stopSound():startSound());
+    $('#playlist').addEventListener('click',e=>{ const b=e.target.closest('[data-track]'); if(!b)return; stopSound(); selected=moods.find(m=>m.id===b.dataset.track); elapsed=0; setTheme(selected); updateProgress(); startSound(); });
+    $('#progress').addEventListener('click',e=>seek(e.clientX));
+    $('#progress').addEventListener('keydown',e=>{ if(e.key==='ArrowRight')elapsed=Math.min(selected.duration,elapsed+5); if(e.key==='ArrowLeft')elapsed=Math.max(0,elapsed-5); updateProgress(); });
+    $$('.action').forEach(b=>b.addEventListener('click',()=>openSheet(b.dataset.sheet)));
+    $$('.sheet').forEach(s=>{ $('.close',s).addEventListener('click',()=>closeSheet(s)); s.addEventListener('click',e=>{if(e.target===s)closeSheet(s)}); });
+    document.addEventListener('keydown',e=>{if(e.key==='Escape')$$('.sheet.open').forEach(closeSheet)});
+
+    let rating=0;
+    $$('.star').forEach(star=>star.addEventListener('click',()=>{ rating=+star.dataset.rate; $$('.star').forEach(x=>x.classList.toggle('selected',+x.dataset.rate<=rating)); }));
+    $('#reviewForm').addEventListener('submit',e=>{ e.preventDefault(); const review={rating,text:$('#reviewText').value.trim(),at:new Date().toISOString()}; localStorage.setItem('dripTapeReview',JSON.stringify(review)); closeSheet($('#reviewSheet')); $('#toast').classList.add('show'); setTimeout(()=>$('#toast').classList.remove('show'),2500); });
+    setTheme(selected);
+  </script>
+</body>
+</html>
