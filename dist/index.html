@@ -85,7 +85,7 @@
     h1 { max-width: 850px; margin: 0; font-family: Unbounded, sans-serif; font-size: clamp(2.5rem, 7vw, 6.5rem); line-height: .98; letter-spacing: -.055em; text-wrap: balance; }
     .lead { max-width: 580px; margin: 24px 0 34px; color: rgba(255,255,255,.7); font-size: clamp(1rem, 2vw, 1.2rem); line-height: 1.55; }
 
-    .moods { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .moods { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
     .mood {
       position: relative;
       min-height: 168px;
@@ -221,7 +221,7 @@
   <main class="app">
     <header class="topbar">
       <div class="brand"><span class="brand-mark"></span><span>DRIP TAPE</span></div>
-      <div class="edition">SIDE A · 01/04</div>
+      <div class="edition">SIDE A · 01/03</div>
     </header>
 
     <section class="screen" id="moodScreen">
@@ -295,10 +295,9 @@
 
   <script>
     const moods = [
-      { id:'calm', name:'Тихое утро', hint:'спокойствие', track:'Between Leaves', duration:222, colors:['#54f0a9','#0f766e','#c7ff70'], glow:'rgba(68,238,161,.28)', freq:196 },
-      { id:'focus', name:'В потоке', hint:'фокус', track:'Blue Hour', duration:248, colors:['#58a6ff','#223eaa','#50d8ff'], glow:'rgba(59,130,246,.3)', freq:220 },
-      { id:'nostalgia', name:'Тёплые воспоминания', hint:'ностальгия', track:'Last Light', duration:236, colors:['#d29a66','#753f2c','#ffcf8f'], glow:'rgba(204,126,65,.3)', freq:174 },
-      { id:'spark', name:'Искра', hint:'нужен заряд', track:'Pink Voltage', duration:207, colors:['#ff6938','#e32482','#ffb321'], glow:'rgba(255,70,91,.32)', freq:247 }
+      { id:'calm', name:'Тихое утро', hint:'спокойствие', track:'Who am I', artist:'KVBNG', src:'audio/kvbng-who-am-i.mp3', duration:198.672, colors:['#54f0a9','#0f766e','#c7ff70'], glow:'rgba(68,238,161,.28)' },
+      { id:'nostalgia', name:'Тёплые воспоминания', hint:'меланхолия', track:'downtown', artist:'KVBNG', src:'audio/kvbng-downtown.mp3', duration:166.752, colors:['#d29a66','#753f2c','#ffcf8f'], glow:'rgba(204,126,65,.3)' },
+      { id:'spark', name:'Солнце внутри', hint:'регги · заряд', track:'Cake Gut', artist:'KVBNG', src:'audio/kvbng-cake-gut.mp3', duration:195.912, colors:['#ff6938','#e32482','#ffb321'], glow:'rgba(255,70,91,.32)' }
     ];
     const stepsData = [
       ['Открой', 'Разверни ушки дрипа и поставь его на чашку.'],
@@ -309,7 +308,9 @@
 
     const $ = (s, root=document) => root.querySelector(s);
     const $$ = (s, root=document) => [...root.querySelectorAll(s)];
-    let selected = moods[0], currentStep = 0, isPlaying = false, elapsed = 0, ticker, audioCtx, osc, gain;
+    let selected = moods[0], currentStep = 0, isPlaying = false, fadeFrame = 0;
+    const audio = new Audio();
+    audio.preload = 'metadata';
 
     $('#moods').innerHTML = moods.map((m,i) => `<button class="mood" type="button" data-mood="${m.id}" style="--mood:${m.colors[0]}"><span class="mood-num">0${i+1} · ${m.hint}</span><strong>${m.name}</strong><span class="mood-arrow">↗</span></button>`).join('');
     $('#steps').innerHTML = stepsData.map((s,i) => `<button class="step ${i===0?'active':''}" type="button" data-step="${i}"><span class="step-index">${i+1}</span><h3>${s[0]}</h3><p>${s[1]}</p></button>`).join('');
@@ -319,12 +320,12 @@
     function setTheme(m) {
       const root=document.documentElement.style;
       root.setProperty('--a',m.colors[0]); root.setProperty('--b',m.colors[1]); root.setProperty('--c',m.colors[2]); root.setProperty('--glow',m.glow);
-      $('#moodTitle').textContent=m.name; $('#coverTitle').textContent=m.track; $('#trackTitle').textContent=m.track; $('#timeTotal').textContent=format(m.duration);
+      $('#moodTitle').textContent=m.name; $('#coverTitle').textContent=m.track; $('#trackTitle').textContent=m.track; $('#trackArtist').textContent=m.artist; $('#timeTotal').textContent=format(m.duration);
       $$('.track-item').forEach(x=>x.classList.toggle('current',x.dataset.track===m.id));
-      $('.edition').textContent=`SIDE A · 0${moods.indexOf(m)+1}/04`;
+      $('.edition').textContent=`SIDE A · 0${moods.indexOf(m)+1}/03`;
     }
     function openExperience(id) {
-      stopSound(); selected=moods.find(m=>m.id===id); elapsed=0; setTheme(selected); updateProgress();
+      selectTrack(moods.find(m=>m.id===id), true);
       $('#moodScreen').hidden=true; $('#experienceScreen').hidden=false; window.scrollTo({top:0,behavior:'smooth'});
     }
     function openMoodPicker() { stopSound(); $('#experienceScreen').hidden=true; $('#moodScreen').hidden=false; window.scrollTo({top:0,behavior:'smooth'}); }
@@ -334,29 +335,47 @@
       $('#stepStatus').textContent=`Шаг ${index+1} из 4`;
     }
 
-    function ensureSound() {
-      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      if (audioCtx.state==='suspended') audioCtx.resume();
+    function selectTrack(track, autoplay=false) {
+      cancelAnimationFrame(fadeFrame);
+      audio.pause();
+      selected=track;
+      audio.src=selected.src;
+      audio.currentTime=0;
+      audio.volume=0;
+      setTheme(selected);
+      updateProgress();
+      if (autoplay) startSound();
     }
-    function startSound() {
-      ensureSound(); if (osc) return;
-      osc=audioCtx.createOscillator(); gain=audioCtx.createGain();
-      const filter=audioCtx.createBiquadFilter(); filter.type='lowpass'; filter.frequency.value=620;
-      osc.type='triangle'; osc.frequency.value=selected.freq; gain.gain.value=.0001;
-      osc.connect(filter).connect(gain).connect(audioCtx.destination); osc.start();
-      gain.gain.exponentialRampToValueAtTime(.022,audioCtx.currentTime+.8);
-      isPlaying=true; updatePlayIcon();
-      ticker=setInterval(()=>{ elapsed=(elapsed+.25)%selected.duration; updateProgress(); },250);
+    function fadeTo(target, duration, done) {
+      cancelAnimationFrame(fadeFrame);
+      const from=audio.volume, started=performance.now();
+      const tick=now=>{
+        const p=Math.min(1,(now-started)/duration);
+        const eased=p*p*(3-2*p);
+        audio.volume=Math.max(0,Math.min(1,from+(target-from)*eased));
+        if(p<1) fadeFrame=requestAnimationFrame(tick); else if(done) done();
+      };
+      fadeFrame=requestAnimationFrame(tick);
+    }
+    async function startSound() {
+      try {
+        audio.volume=0;
+        await audio.play();
+        isPlaying=true;
+        updatePlayIcon();
+        fadeTo(1,4000);
+      } catch (error) {
+        isPlaying=false;
+        updatePlayIcon();
+      }
     }
     function stopSound() {
-      clearInterval(ticker);
-      if (gain && audioCtx) gain.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+.12);
-      if (osc) { const old=osc; setTimeout(()=>{try{old.stop()}catch(e){}},150); }
-      osc=null; isPlaying=false; updatePlayIcon();
+      if (audio.paused) return;
+      fadeTo(0,450,()=>{ audio.pause(); isPlaying=false; updatePlayIcon(); });
     }
     function updatePlayIcon() { $('#playIcon').setAttribute('d',isPlaying?'M7 5h4v14H7zm6 0h4v14h-4z':'M8 5v14l11-7z'); $('#playBtn').setAttribute('aria-label',isPlaying?'Пауза':'Воспроизвести'); }
-    function updateProgress() { const p=elapsed/selected.duration*100; $('.progress b').style.width=`${p}%`; $('#progress').setAttribute('aria-valuenow',Math.round(p)); $('#timeNow').textContent=format(elapsed); }
-    function seek(clientX) { const r=$('#progress').getBoundingClientRect(); elapsed=Math.min(selected.duration,Math.max(0,(clientX-r.left)/r.width*selected.duration)); updateProgress(); }
+    function updateProgress() { const duration=Number.isFinite(audio.duration)?audio.duration:selected.duration; const p=duration?audio.currentTime/duration*100:0; $('.progress b').style.width=`${p}%`; $('#progress').setAttribute('aria-valuenow',Math.round(p)); $('#timeNow').textContent=format(audio.currentTime); $('#timeTotal').textContent=format(duration); }
+    function seek(clientX) { const r=$('#progress').getBoundingClientRect(); const duration=Number.isFinite(audio.duration)?audio.duration:selected.duration; audio.currentTime=Math.min(duration,Math.max(0,(clientX-r.left)/r.width*duration)); updateProgress(); }
     function openSheet(id) { const el=$(`#${id}Sheet`); el.classList.add('open'); el.setAttribute('aria-hidden','false'); setTimeout(()=>$('.close',el).focus(),100); }
     function closeSheet(el) { el.classList.remove('open'); el.setAttribute('aria-hidden','true'); }
 
@@ -364,9 +383,9 @@
     $('#backBtn').addEventListener('click',openMoodPicker);
     $('#steps').addEventListener('click',e=>{ const b=e.target.closest('[data-step]'); if(b) selectStep(+b.dataset.step); });
     $('#playBtn').addEventListener('click',()=>isPlaying?stopSound():startSound());
-    $('#playlist').addEventListener('click',e=>{ const b=e.target.closest('[data-track]'); if(!b)return; stopSound(); selected=moods.find(m=>m.id===b.dataset.track); elapsed=0; setTheme(selected); updateProgress(); startSound(); });
+    $('#playlist').addEventListener('click',e=>{ const b=e.target.closest('[data-track]'); if(!b)return; selectTrack(moods.find(m=>m.id===b.dataset.track),true); });
     $('#progress').addEventListener('click',e=>seek(e.clientX));
-    $('#progress').addEventListener('keydown',e=>{ if(e.key==='ArrowRight')elapsed=Math.min(selected.duration,elapsed+5); if(e.key==='ArrowLeft')elapsed=Math.max(0,elapsed-5); updateProgress(); });
+    $('#progress').addEventListener('keydown',e=>{ const duration=Number.isFinite(audio.duration)?audio.duration:selected.duration; if(e.key==='ArrowRight')audio.currentTime=Math.min(duration,audio.currentTime+5); if(e.key==='ArrowLeft')audio.currentTime=Math.max(0,audio.currentTime-5); updateProgress(); });
     $$('.action').forEach(b=>b.addEventListener('click',()=>openSheet(b.dataset.sheet)));
     $$('.sheet').forEach(s=>{ $('.close',s).addEventListener('click',()=>closeSheet(s)); s.addEventListener('click',e=>{if(e.target===s)closeSheet(s)}); });
     document.addEventListener('keydown',e=>{if(e.key==='Escape')$$('.sheet.open').forEach(closeSheet)});
@@ -374,6 +393,11 @@
     let rating=0;
     $$('.star').forEach(star=>star.addEventListener('click',()=>{ rating=+star.dataset.rate; $$('.star').forEach(x=>x.classList.toggle('selected',+x.dataset.rate<=rating)); }));
     $('#reviewForm').addEventListener('submit',e=>{ e.preventDefault(); const review={rating,text:$('#reviewText').value.trim(),at:new Date().toISOString()}; localStorage.setItem('dripTapeReview',JSON.stringify(review)); closeSheet($('#reviewSheet')); $('#toast').classList.add('show'); setTimeout(()=>$('#toast').classList.remove('show'),2500); });
+    audio.addEventListener('timeupdate',updateProgress);
+    audio.addEventListener('loadedmetadata',updateProgress);
+    audio.addEventListener('ended',()=>{ const next=moods[(moods.indexOf(selected)+1)%moods.length]; selectTrack(next,true); });
+    audio.addEventListener('pause',()=>{ if(!audio.ended){ isPlaying=false; updatePlayIcon(); } });
+    selectTrack(selected,false);
     setTheme(selected);
   </script>
 </body>
