@@ -18,18 +18,19 @@
       --line: rgba(255, 255, 255, .11);
       --muted: rgba(255, 255, 255, .6);
       --text: #f7f6fb;
-      --a: #54f0a9;
-      --b: #0f766e;
-      --c: #c7ff70;
-      --glow: rgba(68, 238, 161, .28);
+      --a: #87909c;
+      --b: #3f4652;
+      --c: #c4c9d0;
+      --glow: rgba(129, 140, 153, .22);
       --radius: 28px;
     }
 
     * { box-sizing: border-box; }
-    html { background: var(--bg); scroll-behavior: smooth; }
+    html { max-width: 100%; background: var(--bg); scroll-behavior: smooth; overflow-x: hidden; }
     body {
       margin: 0;
       min-width: 320px;
+      max-width: 100vw;
       min-height: 100vh;
       color: var(--text);
       background: var(--bg);
@@ -82,10 +83,10 @@
     .screen { min-height: calc(100vh - 92px); padding-top: clamp(8vh, 12vh, 128px); }
     .screen[hidden] { display: none; }
     .eyebrow { margin: 0 0 18px; color: rgba(255,255,255,.64); font-size: .76rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
-    h1 { max-width: 850px; margin: 0; font-family: Unbounded, sans-serif; font-size: clamp(2.5rem, 7vw, 6.5rem); line-height: .98; letter-spacing: -.055em; text-wrap: balance; }
+    h1 { max-width: 850px; margin: 0; font-family: Unbounded, sans-serif; font-size: clamp(2.5rem, 7vw, 6.5rem); line-height: .98; letter-spacing: -.055em; text-wrap: balance; overflow-wrap: anywhere; }
     .lead { max-width: 580px; margin: 24px 0 34px; color: rgba(255,255,255,.7); font-size: clamp(1rem, 2vw, 1.2rem); line-height: 1.55; }
 
-    .moods { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .moods { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
     .mood {
       position: relative;
       min-height: 168px;
@@ -111,8 +112,9 @@
     .mood-arrow { position: relative; z-index: 1; align-self: flex-end; width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 50%; }
 
     .experience { padding-top: 42px; }
-    .experience-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; margin-bottom: 22px; }
-    .experience h1 { font-size: clamp(2.3rem, 5vw, 4.8rem); }
+    .experience-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; margin-bottom: 22px; min-width: 0; }
+    .experience-head > div { min-width: 0; }
+    .experience h1 { max-width: 100%; font-size: clamp(2.3rem, 5vw, 4.8rem); overflow-wrap: anywhere; }
     .back { flex: 0 0 auto; padding: 12px 15px; border: 1px solid var(--line); border-radius: 999px; background: rgba(12,12,15,.45); cursor: pointer; backdrop-filter: blur(12px); }
     .back:hover { background: rgba(255,255,255,.09); }
 
@@ -120,6 +122,7 @@
     .ritual-top { display: flex; justify-content: space-between; gap: 20px; padding: 22px 24px 18px; border-bottom: 1px solid var(--line); }
     .ritual-title { font-weight: 700; }
     .ritual-meta { color: var(--muted); font-size: .88rem; }
+    #stepStatus { white-space: nowrap; }
     .steps { display: grid; grid-template-columns: repeat(4, 1fr); }
     .step { position: relative; padding: 22px 18px 24px; border: 0; border-right: 1px solid var(--line); background: transparent; text-align: left; cursor: pointer; opacity: .44; transition: opacity 220ms ease, background 220ms ease; }
     .step:last-child { border-right: 0; }
@@ -133,11 +136,8 @@
     .content-grid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(300px, .78fr); gap: 16px; margin-top: 16px; }
     .player, .playlist { border: 1px solid var(--line); border-radius: var(--radius); background: rgba(14,14,18,.75); backdrop-filter: blur(24px); }
     .player { min-height: 420px; padding: clamp(18px, 4vw, 30px); display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; }
-    .cover { position: relative; min-height: 225px; overflow: hidden; border-radius: 22px; background: linear-gradient(135deg, var(--a), var(--b) 52%, var(--c)); box-shadow: 0 30px 90px var(--glow); }
-    .cover::before, .cover::after { content: ''; position: absolute; border-radius: 50%; filter: blur(28px); animation: cover-drift 9s ease-in-out infinite alternate; }
-    .cover::before { width: 70%; height: 115%; left: -10%; top: -40%; background: color-mix(in srgb, var(--c) 72%, transparent); }
-    .cover::after { width: 64%; height: 100%; right: -12%; bottom: -38%; background: color-mix(in srgb, var(--a) 68%, black); animation-delay: -4s; }
-    @keyframes cover-drift { to { transform: translate(32%, 22%) scale(1.12) rotate(18deg); } }
+    .cover { position: relative; min-height: 225px; overflow: hidden; border-radius: 22px; background-color: var(--b); background-position: center; background-size: cover; box-shadow: 0 30px 90px var(--glow); }
+    .cover::before { content: ''; position: absolute; z-index: 1; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.04) 48%, rgba(0,0,0,.58)); }
     .cover-label { position: absolute; z-index: 2; inset: 18px; display: flex; flex-direction: column; justify-content: space-between; }
     .tape-side { font: 600 .69rem/1 Unbounded, sans-serif; letter-spacing: .12em; text-transform: uppercase; }
     .cover-label strong { max-width: 340px; font: 600 clamp(1.7rem, 4vw, 3.5rem)/.96 Unbounded, sans-serif; letter-spacing: -.05em; }
@@ -154,7 +154,7 @@
     .playlist h2 { margin: 0 0 18px; font: 600 1rem/1.2 Unbounded, sans-serif; }
     .track-item { width: 100%; display: grid; grid-template-columns: 42px 1fr auto; align-items: center; gap: 12px; padding: 11px; border: 0; border-radius: 14px; background: transparent; text-align: left; cursor: pointer; }
     .track-item:hover, .track-item.current { background: rgba(255,255,255,.07); }
-    .track-art { width: 42px; aspect-ratio: 1; border-radius: 11px; background: linear-gradient(135deg, var(--x), var(--y)); }
+    .track-art { width: 42px; aspect-ratio: 1; border-radius: 11px; background-color: var(--x); background-position: center; background-size: cover; }
     .track-item strong { display: block; font-size: .84rem; }
     .track-item small { color: var(--muted); font-size: .7rem; }
     .track-duration { color: var(--muted); font-size: .72rem; }
@@ -182,6 +182,37 @@
     .toast { position: fixed; z-index: 20; left: 50%; bottom: 26px; padding: 13px 18px; border: 1px solid var(--line); border-radius: 999px; background: #18181d; transform: translate(-50%, 120px); transition: transform 260ms ease; white-space: nowrap; box-shadow: 0 12px 40px rgba(0,0,0,.4); }
     .toast.show { transform: translate(-50%, 0); }
 
+    .dock {
+      position: fixed;
+      z-index: 8;
+      left: 50%;
+      bottom: max(14px, env(safe-area-inset-bottom));
+      width: min(620px, calc(100vw - 28px));
+      min-width: 0;
+      display: grid;
+      grid-template-columns: 52px minmax(0, 1fr) auto auto;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 20px;
+      background: rgba(14,14,18,.88);
+      box-shadow: 0 18px 60px rgba(0,0,0,.48), 0 0 40px var(--glow);
+      backdrop-filter: blur(26px);
+      transform: translateX(-50%);
+    }
+    .dock[hidden] { display: none; }
+    .dock-progress { position: absolute; inset: 0 0 auto; height: 3px; background: rgba(255,255,255,.1); cursor: pointer; }
+    .dock-progress b { display: block; width: 0; height: 100%; background: var(--a); }
+    .dock-art { width: 52px; aspect-ratio: 1; border-radius: 13px; background-position: center; background-size: cover; }
+    .dock-copy { min-width: 0; }
+    .dock-copy strong, .dock-copy span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .dock-copy strong { font-size: .9rem; }
+    .dock-copy span, .dock-time { color: var(--muted); font-size: .72rem; }
+    .dock-play { width: 44px; height: 44px; display: grid; place-items: center; border: 0; border-radius: 50%; background: #fff; color: #09090b; cursor: pointer; }
+    .dock-play svg { width: 17px; fill: currentColor; }
+
     @media (max-width: 820px) {
       .moods { grid-template-columns: 1fr 1fr; }
       .content-grid { grid-template-columns: 1fr; }
@@ -193,12 +224,20 @@
     @media (max-width: 520px) {
       .app { padding-inline: 14px; }
       .edition { display: none; }
-      .screen { padding-top: 8vh; }
-      .moods { grid-template-columns: 1fr; }
-      .mood { min-height: 104px; }
+      .screen { padding-top: 4vh; }
+      #moodScreen h1 { font-size: clamp(2.05rem, 10vw, 3rem); }
+      .lead { margin: 16px 0 22px; font-size: .95rem; }
+      .moods { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+      .mood { min-height: 122px; padding: 14px; border-radius: 19px; }
+      .mood-num { font-size: .66rem; }
+      .mood strong { font-size: .92rem; }
       .mood strong { max-width: none; }
       .experience { padding-top: 24px; }
-      .experience-head { align-items: flex-start; }
+      .experience-head { position: relative; display: block; }
+      .experience-head .eyebrow { padding-right: 118px; }
+      .experience-head .back { position: absolute; top: -10px; right: 0; }
+      .experience h1 { font-size: clamp(1.9rem, 8.3vw, 2.4rem); line-height: 1.04; overflow-wrap: normal; word-break: normal; }
+      .ritual-top { gap: 10px; padding-inline: 18px; }
       .steps { grid-template-columns: 1fr; }
       .step { display: grid; grid-template-columns: 36px 1fr; column-gap: 12px; padding: 15px; border-right: 0; border-bottom: 1px solid var(--line); }
       .step:last-child { border-bottom: 0; }
@@ -209,6 +248,10 @@
       .track-line { grid-template-columns: auto 1fr; }
       .time { display: none; }
       .progress { grid-column: 2; }
+      .dock { bottom: max(8px, env(safe-area-inset-bottom)); width: calc(100vw - 16px); grid-template-columns: 46px minmax(0,1fr) auto; padding: 8px 10px; border-radius: 17px; }
+      .dock-art { width: 46px; border-radius: 11px; }
+      .dock-time { display: none; }
+      .dock-play { width: 42px; height: 42px; }
     }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
@@ -221,7 +264,7 @@
   <main class="app">
     <header class="topbar">
       <div class="brand"><span class="brand-mark"></span><span>DRIP TAPE</span></div>
-      <div class="edition">SIDE A · 01/03</div>
+      <div class="edition">SIDE A · 01/04</div>
     </header>
 
     <section class="screen" id="moodScreen">
@@ -270,6 +313,14 @@
     </section>
   </main>
 
+  <div class="dock" id="dock" hidden aria-label="Закреплённый музыкальный плеер">
+    <div class="dock-progress" id="dockProgress" role="slider" aria-label="Позиция трека" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><b id="dockProgressBar"></b></div>
+    <div class="dock-art" id="dockArt" aria-hidden="true"></div>
+    <div class="dock-copy"><strong id="dockTitle">Who am I</strong><span id="dockArtist">KVBNG</span></div>
+    <span class="dock-time" id="dockTime">0:00</span>
+    <button class="dock-play" id="dockPlayBtn" type="button" aria-label="Воспроизвести"><svg viewBox="0 0 24 24" aria-hidden="true"><path id="dockPlayIcon" d="M8 5v14l11-7z"/></svg></button>
+  </div>
+
   <div class="sheet" id="coffeeSheet" aria-hidden="true">
     <div class="sheet-panel" role="dialog" aria-modal="true" aria-labelledby="coffeeTitle">
       <div class="sheet-head"><h2 id="coffeeTitle">Эфиопия · Guji</h2><button class="close" type="button" aria-label="Закрыть">✕</button></div>
@@ -294,11 +345,15 @@
   <div class="toast" id="toast" role="status">Спасибо. Отзыв сохранён ♥</div>
 
   <script>
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    requestAnimationFrame(()=>window.scrollTo(0,0));
     const moods = [
-      { id:'calm', name:'Тихое утро', hint:'спокойствие', track:'Who am I', artist:'KVBNG', src:'audio/kvbng-who-am-i.mp3', duration:198.672, colors:['#54f0a9','#0f766e','#c7ff70'], glow:'rgba(68,238,161,.28)' },
-      { id:'nostalgia', name:'Тёплые воспоминания', hint:'меланхолия', track:'downtown', artist:'KVBNG', src:'audio/kvbng-downtown.mp3', duration:166.752, colors:['#d29a66','#753f2c','#ffcf8f'], glow:'rgba(204,126,65,.3)' },
-      { id:'spark', name:'Солнце внутри', hint:'регги · заряд', track:'Cake Gut', artist:'KVBNG', src:'audio/kvbng-cake-gut.mp3', duration:195.912, colors:['#ff6938','#e32482','#ffb321'], glow:'rgba(255,70,91,.32)' }
+      { id:'calm', name:'Тихое утро', hint:'спокойствие', track:'Who am I', artist:'KVBNG', src:'audio/kvbng-who-am-i.mp3', artwork:'artwork/calm.webp', duration:198.672, colors:['#54f0a9','#0f766e','#c7ff70'], glow:'rgba(68,238,161,.28)' },
+      { id:'nostalgia', name:'Тёплые воспоминания', hint:'меланхолия', track:'downtown', artist:'KVBNG', src:'audio/kvbng-downtown.mp3', artwork:'artwork/nostalgia.webp', duration:166.752, colors:['#d29a66','#753f2c','#ffcf8f'], glow:'rgba(204,126,65,.3)' },
+      { id:'spark', name:'Солнце внутри', hint:'регги · тепло', track:'Cake Gut', artist:'KVBNG', src:'audio/kvbng-cake-gut.mp3', artwork:'artwork/sun.webp', duration:195.912, colors:['#ff6938','#e32482','#ffb321'], glow:'rgba(255,70,91,.32)' },
+      { id:'charge', name:'Заряд', hint:'энергия', track:'Keep it local', artist:'KVBNG', src:'audio/kvbng-keep-it-local.mp3', artwork:'artwork/charge.webp', duration:158.112, colors:['#ff482b','#d20f63','#ffb000'], glow:'rgba(255,64,55,.34)' }
     ];
+    const neutralTheme = { colors:['#87909c','#3f4652','#c4c9d0'], glow:'rgba(129,140,153,.22)' };
     const stepsData = [
       ['Открой', 'Разверни ушки дрипа и поставь его на чашку.'],
       ['Смочи', 'Влей 40 мл воды и подожди 30 секунд.'],
@@ -314,35 +369,41 @@
 
     $('#moods').innerHTML = moods.map((m,i) => `<button class="mood" type="button" data-mood="${m.id}" style="--mood:${m.colors[0]}"><span class="mood-num">0${i+1} · ${m.hint}</span><strong>${m.name}</strong><span class="mood-arrow">↗</span></button>`).join('');
     $('#steps').innerHTML = stepsData.map((s,i) => `<button class="step ${i===0?'active':''}" type="button" data-step="${i}"><span class="step-index">${i+1}</span><h3>${s[0]}</h3><p>${s[1]}</p></button>`).join('');
-    $('#playlist').innerHTML = moods.map(m => `<button class="track-item" type="button" data-track="${m.id}"><span class="track-art" style="--x:${m.colors[0]};--y:${m.colors[1]}"></span><span><strong>${m.track}</strong><small>${m.name}</small></span><span class="track-duration">${format(m.duration)}</span></button>`).join('');
+    $('#playlist').innerHTML = moods.map(m => `<button class="track-item" type="button" data-track="${m.id}"><span class="track-art" style="--x:${m.colors[0]};background-image:url('${m.artwork}')"></span><span><strong>${m.track}</strong><small>${m.name}</small></span><span class="track-duration">${format(m.duration)}</span></button>`).join('');
 
     function format(seconds) { const n=Math.max(0,Math.floor(seconds)); return `${Math.floor(n/60)}:${String(n%60).padStart(2,'0')}`; }
-    function setTheme(m) {
+    function applyPalette(theme) {
       const root=document.documentElement.style;
-      root.setProperty('--a',m.colors[0]); root.setProperty('--b',m.colors[1]); root.setProperty('--c',m.colors[2]); root.setProperty('--glow',m.glow);
+      root.setProperty('--a',theme.colors[0]); root.setProperty('--b',theme.colors[1]); root.setProperty('--c',theme.colors[2]); root.setProperty('--glow',theme.glow);
+    }
+    function setTheme(m, withColor=true) {
+      if(withColor) applyPalette(m);
       $('#moodTitle').textContent=m.name; $('#coverTitle').textContent=m.track; $('#trackTitle').textContent=m.track; $('#trackArtist').textContent=m.artist; $('#timeTotal').textContent=format(m.duration);
+      $('.cover').style.backgroundImage=`url('${m.artwork}')`;
+      $('#dockArt').style.backgroundImage=`url('${m.artwork}')`;
+      $('#dockTitle').textContent=m.track; $('#dockArtist').textContent=m.artist;
       $$('.track-item').forEach(x=>x.classList.toggle('current',x.dataset.track===m.id));
-      $('.edition').textContent=`SIDE A · 0${moods.indexOf(m)+1}/03`;
+      $('.edition').textContent=`SIDE A · 0${moods.indexOf(m)+1}/04`;
     }
     function openExperience(id) {
-      selectTrack(moods.find(m=>m.id===id), true);
-      $('#moodScreen').hidden=true; $('#experienceScreen').hidden=false; window.scrollTo({top:0,behavior:'smooth'});
+      selectTrack(moods.find(m=>m.id===id), true, true);
+      $('#moodScreen').hidden=true; $('#experienceScreen').hidden=false; $('#dock').hidden=false; window.scrollTo({top:0,behavior:'smooth'});
     }
-    function openMoodPicker() { stopSound(); $('#experienceScreen').hidden=true; $('#moodScreen').hidden=false; window.scrollTo({top:0,behavior:'smooth'}); }
+    function openMoodPicker() { stopSound(); $('#experienceScreen').hidden=true; $('#dock').hidden=true; $('#moodScreen').hidden=false; applyPalette(neutralTheme); $('.edition').textContent='SIDE A · 01/04'; window.scrollTo({top:0,behavior:'smooth'}); }
     function selectStep(index) {
       currentStep=index;
       $$('.step').forEach((x,i)=>{ x.classList.toggle('active',i===index); x.classList.toggle('done',i<index); x.querySelector('.step-index').textContent=i<index?'✓':i+1; });
       $('#stepStatus').textContent=`Шаг ${index+1} из 4`;
     }
 
-    function selectTrack(track, autoplay=false) {
+    function selectTrack(track, autoplay=false, withColor=true) {
       cancelAnimationFrame(fadeFrame);
       audio.pause();
       selected=track;
       audio.src=selected.src;
       audio.currentTime=0;
       audio.volume=0;
-      setTheme(selected);
+      setTheme(selected,withColor);
       updateProgress();
       if (autoplay) startSound();
     }
@@ -373,8 +434,8 @@
       if (audio.paused) return;
       fadeTo(0,450,()=>{ audio.pause(); isPlaying=false; updatePlayIcon(); });
     }
-    function updatePlayIcon() { $('#playIcon').setAttribute('d',isPlaying?'M7 5h4v14H7zm6 0h4v14h-4z':'M8 5v14l11-7z'); $('#playBtn').setAttribute('aria-label',isPlaying?'Пауза':'Воспроизвести'); }
-    function updateProgress() { const duration=Number.isFinite(audio.duration)?audio.duration:selected.duration; const p=duration?audio.currentTime/duration*100:0; $('.progress b').style.width=`${p}%`; $('#progress').setAttribute('aria-valuenow',Math.round(p)); $('#timeNow').textContent=format(audio.currentTime); $('#timeTotal').textContent=format(duration); }
+    function updatePlayIcon() { const path=isPlaying?'M7 5h4v14H7zm6 0h4v14h-4z':'M8 5v14l11-7z'; $('#playIcon').setAttribute('d',path); $('#dockPlayIcon').setAttribute('d',path); $('#playBtn').setAttribute('aria-label',isPlaying?'Пауза':'Воспроизвести'); $('#dockPlayBtn').setAttribute('aria-label',isPlaying?'Пауза':'Воспроизвести'); }
+    function updateProgress() { const duration=Number.isFinite(audio.duration)?audio.duration:selected.duration; const p=duration?audio.currentTime/duration*100:0; $('.progress b').style.width=`${p}%`; $('#dockProgressBar').style.width=`${p}%`; $('#progress').setAttribute('aria-valuenow',Math.round(p)); $('#dockProgress').setAttribute('aria-valuenow',Math.round(p)); $('#timeNow').textContent=format(audio.currentTime); $('#dockTime').textContent=format(audio.currentTime); $('#timeTotal').textContent=format(duration); }
     function seek(clientX) { const r=$('#progress').getBoundingClientRect(); const duration=Number.isFinite(audio.duration)?audio.duration:selected.duration; audio.currentTime=Math.min(duration,Math.max(0,(clientX-r.left)/r.width*duration)); updateProgress(); }
     function openSheet(id) { const el=$(`#${id}Sheet`); el.classList.add('open'); el.setAttribute('aria-hidden','false'); setTimeout(()=>$('.close',el).focus(),100); }
     function closeSheet(el) { el.classList.remove('open'); el.setAttribute('aria-hidden','true'); }
@@ -383,8 +444,10 @@
     $('#backBtn').addEventListener('click',openMoodPicker);
     $('#steps').addEventListener('click',e=>{ const b=e.target.closest('[data-step]'); if(b) selectStep(+b.dataset.step); });
     $('#playBtn').addEventListener('click',()=>isPlaying?stopSound():startSound());
+    $('#dockPlayBtn').addEventListener('click',()=>isPlaying?stopSound():startSound());
     $('#playlist').addEventListener('click',e=>{ const b=e.target.closest('[data-track]'); if(!b)return; selectTrack(moods.find(m=>m.id===b.dataset.track),true); });
     $('#progress').addEventListener('click',e=>seek(e.clientX));
+    $('#dockProgress').addEventListener('click',e=>{ const r=e.currentTarget.getBoundingClientRect(); const duration=Number.isFinite(audio.duration)?audio.duration:selected.duration; audio.currentTime=Math.min(duration,Math.max(0,(e.clientX-r.left)/r.width*duration)); updateProgress(); });
     $('#progress').addEventListener('keydown',e=>{ const duration=Number.isFinite(audio.duration)?audio.duration:selected.duration; if(e.key==='ArrowRight')audio.currentTime=Math.min(duration,audio.currentTime+5); if(e.key==='ArrowLeft')audio.currentTime=Math.max(0,audio.currentTime-5); updateProgress(); });
     $$('.action').forEach(b=>b.addEventListener('click',()=>openSheet(b.dataset.sheet)));
     $$('.sheet').forEach(s=>{ $('.close',s).addEventListener('click',()=>closeSheet(s)); s.addEventListener('click',e=>{if(e.target===s)closeSheet(s)}); });
@@ -397,8 +460,8 @@
     audio.addEventListener('loadedmetadata',updateProgress);
     audio.addEventListener('ended',()=>{ const next=moods[(moods.indexOf(selected)+1)%moods.length]; selectTrack(next,true); });
     audio.addEventListener('pause',()=>{ if(!audio.ended){ isPlaying=false; updatePlayIcon(); } });
-    selectTrack(selected,false);
-    setTheme(selected);
+    selectTrack(selected,false,false);
+    applyPalette(neutralTheme);
   </script>
 </body>
 </html>
