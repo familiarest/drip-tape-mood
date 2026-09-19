@@ -90,9 +90,8 @@
 
     .app { position: relative; z-index: 2; width: min(1180px, 100%); margin: 0 auto; padding: 22px clamp(18px, 4vw, 54px) 28px; }
     .topbar { display: flex; align-items: center; justify-content: space-between; min-height: 48px; }
-    .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
-    .brand-title { flex: 0 0 auto; font: 600 .72rem/1 Unbounded, sans-serif; letter-spacing: .09em; white-space: nowrap; }
-    .brand-logo { display: block; width: clamp(92px, 10vw, 122px); height: auto; }
+    .brand { display: flex; align-items: center; min-width: 0; }
+    .brand-logo { display: block; width: clamp(116px, 13vw, 148px); height: auto; }
     .edition { color: var(--muted); font-size: .75rem; letter-spacing: .12em; text-transform: uppercase; }
 
     .screen { min-height: calc(100vh - 92px); padding-top: clamp(8vh, 12vh, 128px); }
@@ -115,7 +114,10 @@
       touch-action: pan-y;
       user-select: none;
       outline: none;
+      --drag-x: 0px;
     }
+    .moods.dragging { cursor: grabbing; }
+    .moods.dragging .mood { transition: none; }
     .mood {
       position: relative;
       position: absolute;
@@ -138,19 +140,21 @@
       text-align: left;
       box-shadow: 0 28px 70px rgba(0,0,0,.44);
       transform-style: preserve-3d;
-      transition: transform 680ms cubic-bezier(.2,.75,.2,1), opacity 540ms ease, filter 540ms ease, border-color 280ms ease;
+      transition: transform 520ms cubic-bezier(.22,.88,.24,1), opacity 390ms ease, filter 390ms ease, border-color 240ms ease;
       will-change: transform, opacity;
+      backface-visibility: hidden;
+      contain: layout paint;
     }
     .mood::before { content: ''; position: absolute; z-index: 0; inset: 0; background: linear-gradient(180deg, rgba(4,4,7,.04) 10%, rgba(4,4,7,.12) 48%, rgba(4,4,7,.91) 100%); }
     .mood::after { content: ''; position: absolute; z-index: 0; inset: auto -35% -30% -35%; height: 58%; background: var(--mood); filter: blur(48px); opacity: .28; }
-    .mood.is-center { z-index: 5; opacity: 1; filter: saturate(1.03) brightness(1); transform: translate3d(-50%,-50%,110px) rotateY(0) scale(1); }
-    .mood.is-left-1 { z-index: 4; opacity: .8; filter: saturate(.76) brightness(.72); transform: translate3d(-104%,-50%,-70px) rotateY(24deg) scale(.86); }
-    .mood.is-right-1 { z-index: 4; opacity: .8; filter: saturate(.76) brightness(.72); transform: translate3d(4%,-50%,-70px) rotateY(-24deg) scale(.86); }
-    .mood.is-left-2 { z-index: 3; opacity: .43; filter: saturate(.55) brightness(.56); transform: translate3d(-143%,-50%,-180px) rotateY(34deg) scale(.7); }
-    .mood.is-right-2 { z-index: 3; opacity: .43; filter: saturate(.55) brightness(.56); transform: translate3d(43%,-50%,-180px) rotateY(-34deg) scale(.7); }
+    .mood.is-center { z-index: 5; opacity: 1; filter: saturate(1.03) brightness(1); transform: translate3d(calc(-50% + var(--drag-x)),-50%,110px) rotateY(0) scale(1); }
+    .mood.is-left-1 { z-index: 4; opacity: .8; filter: saturate(.76) brightness(.72); transform: translate3d(calc(-104% + var(--drag-x)),-50%,-70px) rotateY(24deg) scale(.86); }
+    .mood.is-right-1 { z-index: 4; opacity: .8; filter: saturate(.76) brightness(.72); transform: translate3d(calc(4% + var(--drag-x)),-50%,-70px) rotateY(-24deg) scale(.86); }
+    .mood.is-left-2 { z-index: 3; opacity: .43; filter: saturate(.55) brightness(.56); transform: translate3d(calc(-143% + var(--drag-x)),-50%,-180px) rotateY(34deg) scale(.7); }
+    .mood.is-right-2 { z-index: 3; opacity: .43; filter: saturate(.55) brightness(.56); transform: translate3d(calc(43% + var(--drag-x)),-50%,-180px) rotateY(-34deg) scale(.7); }
     .mood.is-hidden { z-index: 1; opacity: 0; pointer-events: none; transform: translate3d(-50%,-50%,-280px) scale(.55); }
     .mood:focus-visible { outline: 2px solid rgba(255,255,255,.9); outline-offset: 4px; }
-    .mood.is-center:hover { border-color: rgba(255,255,255,.48); transform: translate3d(-50%,-52%,120px) rotateY(0) scale(1.015); }
+    .moods:not(.dragging) .mood.is-center:hover { border-color: rgba(255,255,255,.48); transform: translate3d(calc(-50% + var(--drag-x)),-52%,120px) rotateY(0) scale(1.015); }
     .mood-num, .mood-copy, .mood-open { position: relative; z-index: 1; }
     .mood-num { padding: 7px 9px; color: rgba(255,255,255,.86); border: 1px solid rgba(255,255,255,.17); border-radius: 999px; background: rgba(5,5,8,.28); backdrop-filter: blur(12px); font-size: .64rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
     .mood-copy { width: 100%; margin-top: auto; }
@@ -310,9 +314,7 @@
     }
     @media (max-width: 520px) {
       .app { padding-inline: 14px; }
-      .brand { gap: 8px; }
-      .brand-title { font-size: .64rem; }
-      .brand-logo { width: 96px; }
+      .brand-logo { width: 118px; }
       .edition { display: none; }
       .screen { padding-top: 4vh; }
       #moodScreen h1 { font-size: clamp(2.05rem, 10vw, 3rem); }
@@ -321,10 +323,10 @@
       .mood { width: min(58vw, 218px); padding: 14px; border-radius: 22px; }
       .mood-num { font-size: .58rem; }
       .mood strong { font-size: clamp(.96rem, 4.3vw, 1.16rem); }
-      .mood.is-left-1 { transform: translate3d(-97%,-50%,-70px) rotateY(24deg) scale(.82); }
-      .mood.is-right-1 { transform: translate3d(-3%,-50%,-70px) rotateY(-24deg) scale(.82); }
-      .mood.is-left-2 { transform: translate3d(-128%,-50%,-180px) rotateY(34deg) scale(.64); }
-      .mood.is-right-2 { transform: translate3d(28%,-50%,-180px) rotateY(-34deg) scale(.64); }
+      .mood.is-left-1 { transform: translate3d(calc(-97% + var(--drag-x)),-50%,-70px) rotateY(24deg) scale(.82); }
+      .mood.is-right-1 { transform: translate3d(calc(-3% + var(--drag-x)),-50%,-70px) rotateY(-24deg) scale(.82); }
+      .mood.is-left-2 { transform: translate3d(calc(-128% + var(--drag-x)),-50%,-180px) rotateY(34deg) scale(.64); }
+      .mood.is-right-2 { transform: translate3d(calc(28% + var(--drag-x)),-50%,-180px) rotateY(-34deg) scale(.64); }
       .mood-nav { width: 38px; height: 38px; }
       .mood-nav.prev { left: -2px; }
       .mood-nav.next { right: -2px; }
@@ -359,7 +361,7 @@
   <div class="noise" aria-hidden="true"></div>
   <main class="app">
     <header class="topbar">
-      <div class="brand"><span class="brand-title">ДРИП С</span><img class="brand-logo" src="artwork/kavabanga-logo.svg" alt="Кавабангой"></div>
+      <div class="brand"><img class="brand-logo" src="artwork/kavabanga-logo.svg" alt="Кавабанга"></div>
       <div class="edition">SIDE A · 01/04</div>
     </header>
 
@@ -574,15 +576,37 @@
     function openSheet(id) { const el=$(`#${id}Sheet`); el.classList.add('open'); el.setAttribute('aria-hidden','false'); setTimeout(()=>$('.close',el).focus(),100); }
     function closeSheet(el) { el.classList.remove('open'); el.setAttribute('aria-hidden','true'); }
 
+    const moodStage=$('#moods');
     let dragStartX=0, dragDelta=0, dragPointerId=null, suppressMoodClick=false;
-    $('#moods').addEventListener('pointerdown',e=>{ dragPointerId=e.pointerId; dragStartX=e.clientX; dragDelta=0; });
-    $('#moods').addEventListener('pointermove',e=>{ if(e.pointerId!==dragPointerId)return; dragDelta=e.clientX-dragStartX; });
-    $('#moods').addEventListener('pointerup',e=>{
-      if(e.pointerId!==dragPointerId)return;
-      dragPointerId=null;
-      if(Math.abs(dragDelta)>36){ suppressMoodClick=true; moveCarousel(dragDelta<0?1:-1); setTimeout(()=>suppressMoodClick=false,0); }
+    moodStage.addEventListener('pointerdown',e=>{
+      if(e.pointerType==='mouse' && e.button!==0)return;
+      dragPointerId=e.pointerId;
+      dragStartX=e.clientX;
+      dragDelta=0;
     });
-    $('#moods').addEventListener('pointercancel',()=>{ dragPointerId=null; dragDelta=0; });
+    moodStage.addEventListener('pointermove',e=>{
+      if(e.pointerId!==dragPointerId)return;
+      dragDelta=e.clientX-dragStartX;
+      if(Math.abs(dragDelta)>4){
+        moodStage.classList.add('dragging');
+        if(!moodStage.hasPointerCapture(e.pointerId)) moodStage.setPointerCapture(e.pointerId);
+        const follow=Math.max(-150,Math.min(150,dragDelta*.82));
+        moodStage.style.setProperty('--drag-x',`${follow}px`);
+      }
+    });
+    moodStage.addEventListener('pointerup',e=>{
+      if(e.pointerId!==dragPointerId)return;
+      const wasDrag=Math.abs(dragDelta)>8;
+      const changeMood=Math.abs(dragDelta)>42;
+      if(moodStage.hasPointerCapture(e.pointerId)) moodStage.releasePointerCapture(e.pointerId);
+      dragPointerId=null;
+      moodStage.classList.remove('dragging');
+      moodStage.style.setProperty('--drag-x','0px');
+      if(changeMood) moveCarousel(dragDelta<0?1:-1);
+      if(wasDrag){ suppressMoodClick=true; setTimeout(()=>suppressMoodClick=false,0); }
+      dragDelta=0;
+    });
+    moodStage.addEventListener('pointercancel',()=>{ dragPointerId=null; dragDelta=0; moodStage.classList.remove('dragging'); moodStage.style.setProperty('--drag-x','0px'); });
     $('#moods').addEventListener('click',e=>{
       if(suppressMoodClick) return;
       const b=e.target.closest('[data-mood]');
