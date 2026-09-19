@@ -114,12 +114,9 @@
       touch-action: pan-y;
       user-select: none;
       outline: none;
-      --drag-x: 0px;
     }
     .moods.dragging { cursor: grabbing; }
-    .moods.dragging .mood { transition: none; }
     .mood {
-      position: relative;
       position: absolute;
       top: 50%;
       left: 50%;
@@ -140,21 +137,16 @@
       text-align: left;
       box-shadow: 0 28px 70px rgba(0,0,0,.44);
       transform-style: preserve-3d;
-      transition: transform 520ms cubic-bezier(.22,.88,.24,1), opacity 390ms ease, filter 390ms ease, border-color 240ms ease;
-      will-change: transform, opacity;
+      transition: border-color 220ms ease, box-shadow 220ms ease;
+      will-change: transform, opacity, filter;
       backface-visibility: hidden;
       contain: layout paint;
     }
     .mood::before { content: ''; position: absolute; z-index: 0; inset: 0; background: linear-gradient(180deg, rgba(4,4,7,.04) 10%, rgba(4,4,7,.12) 48%, rgba(4,4,7,.91) 100%); }
     .mood::after { content: ''; position: absolute; z-index: 0; inset: auto -35% -30% -35%; height: 58%; background: var(--mood); filter: blur(48px); opacity: .28; }
-    .mood.is-center { z-index: 5; opacity: 1; filter: saturate(1.03) brightness(1); transform: translate3d(calc(-50% + var(--drag-x)),-50%,110px) rotateY(0) scale(1); }
-    .mood.is-left-1 { z-index: 4; opacity: .8; filter: saturate(.76) brightness(.72); transform: translate3d(calc(-104% + var(--drag-x)),-50%,-70px) rotateY(24deg) scale(.86); }
-    .mood.is-right-1 { z-index: 4; opacity: .8; filter: saturate(.76) brightness(.72); transform: translate3d(calc(4% + var(--drag-x)),-50%,-70px) rotateY(-24deg) scale(.86); }
-    .mood.is-left-2 { z-index: 3; opacity: .43; filter: saturate(.55) brightness(.56); transform: translate3d(calc(-143% + var(--drag-x)),-50%,-180px) rotateY(34deg) scale(.7); }
-    .mood.is-right-2 { z-index: 3; opacity: .43; filter: saturate(.55) brightness(.56); transform: translate3d(calc(43% + var(--drag-x)),-50%,-180px) rotateY(-34deg) scale(.7); }
-    .mood.is-hidden { z-index: 1; opacity: 0; pointer-events: none; transform: translate3d(-50%,-50%,-280px) scale(.55); }
+    .mood.is-center { border-color: rgba(255,255,255,.36); box-shadow: 0 32px 80px rgba(0,0,0,.5); }
     .mood:focus-visible { outline: 2px solid rgba(255,255,255,.9); outline-offset: 4px; }
-    .moods:not(.dragging) .mood.is-center:hover { border-color: rgba(255,255,255,.48); transform: translate3d(calc(-50% + var(--drag-x)),-52%,120px) rotateY(0) scale(1.015); }
+    .moods:not(.dragging) .mood.is-center:hover { border-color: rgba(255,255,255,.54); }
     .mood-num, .mood-copy, .mood-open { position: relative; z-index: 1; }
     .mood-num { padding: 7px 9px; color: rgba(255,255,255,.86); border: 1px solid rgba(255,255,255,.17); border-radius: 999px; background: rgba(5,5,8,.28); backdrop-filter: blur(12px); font-size: .64rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
     .mood-copy { width: 100%; margin-top: auto; }
@@ -323,10 +315,6 @@
       .mood { width: min(58vw, 218px); padding: 14px; border-radius: 22px; }
       .mood-num { font-size: .58rem; }
       .mood strong { font-size: clamp(.96rem, 4.3vw, 1.16rem); }
-      .mood.is-left-1 { transform: translate3d(calc(-97% + var(--drag-x)),-50%,-70px) rotateY(24deg) scale(.82); }
-      .mood.is-right-1 { transform: translate3d(calc(-3% + var(--drag-x)),-50%,-70px) rotateY(-24deg) scale(.82); }
-      .mood.is-left-2 { transform: translate3d(calc(-128% + var(--drag-x)),-50%,-180px) rotateY(34deg) scale(.64); }
-      .mood.is-right-2 { transform: translate3d(calc(28% + var(--drag-x)),-50%,-180px) rotateY(-34deg) scale(.64); }
       .mood-nav { width: 38px; height: 38px; }
       .mood-nav.prev { left: -2px; }
       .mood-nav.next { right: -2px; }
@@ -480,6 +468,7 @@
     const $ = (s, root=document) => root.querySelector(s);
     const $$ = (s, root=document) => [...root.querySelectorAll(s)];
     let selected = moods[0], activeMoodIndex = 0, currentStep = 0, isPlaying = false, fadeFrame = 0;
+    let carouselProgress = 0, carouselFrame = 0, carouselAnimating = false;
     const audio = new Audio();
     audio.preload = 'metadata';
 
@@ -493,22 +482,66 @@
       const root=document.documentElement.style;
       root.setProperty('--a',theme.colors[0]); root.setProperty('--b',theme.colors[1]); root.setProperty('--c',theme.colors[2]); root.setProperty('--glow',theme.glow);
     }
-    function renderMoodCarousel() {
+    const wrapMoodIndex=index=>(index%moods.length+moods.length)%moods.length;
+    function circularMoodOffset(value) {
+      const half=moods.length/2;
+      return ((value+half)%moods.length+moods.length)%moods.length-half;
+    }
+    function carouselSpacing() {
+      const card=$('.mood');
+      const width=card?.getBoundingClientRect().width||220;
+      return Math.min(width*.58,window.innerWidth<560?126:172);
+    }
+    function renderMoodCarousel(progress=carouselProgress) {
+      const spacing=carouselSpacing();
+      const previewCenter=wrapMoodIndex(activeMoodIndex+Math.round(progress));
       $$('.mood').forEach((card,index)=>{
-        let distance=index-activeMoodIndex;
-        if(distance>moods.length/2) distance-=moods.length;
-        if(distance<-moods.length/2) distance+=moods.length;
-        const position=distance===0?'is-center':distance===-1?'is-left-1':distance===1?'is-right-1':distance<0?'is-left-2':'is-right-2';
-        card.className=`mood ${position}`;
-        card.setAttribute('aria-current',distance===0?'true':'false');
-        card.tabIndex=distance===0?0:-1;
+        const offset=circularMoodOffset(index-activeMoodIndex-progress);
+        const distance=Math.min(2,Math.abs(offset));
+        const x=offset*spacing;
+        const y=distance*3;
+        const z=110-distance*175;
+        const rotate=-offset*23;
+        const scale=1-distance*.16;
+        const opacity=distance<=1?1-distance*.22:.78*(2-distance);
+        const brightness=1-distance*.18;
+        const saturation=1-distance*.14;
+        card.style.transform=`translate3d(-50%,-50%,0) translate3d(${x.toFixed(2)}px,${y.toFixed(2)}px,${z.toFixed(2)}px) rotateY(${rotate.toFixed(2)}deg) scale(${scale.toFixed(3)})`;
+        card.style.opacity=Math.max(0,opacity).toFixed(3);
+        card.style.filter=`saturate(${Math.max(.55,saturation).toFixed(3)}) brightness(${Math.max(.55,brightness).toFixed(3)})`;
+        card.style.zIndex=String(Math.round(100-distance*20));
+        const isCenter=index===previewCenter;
+        card.classList.toggle('is-center',isCenter);
+        card.setAttribute('aria-current',index===activeMoodIndex&&Math.abs(progress)<.001?'true':'false');
+        card.tabIndex=index===activeMoodIndex&&Math.abs(progress)<.001?0:-1;
       });
       $$('.mood-dot').forEach((dot,index)=>dot.classList.toggle('active',index===activeMoodIndex));
       $('#moodCount').textContent=`0${activeMoodIndex+1} / 0${moods.length}`;
     }
+    function animateCarousel(target, duration=390) {
+      if(carouselAnimating)return;
+      cancelAnimationFrame(carouselFrame);
+      const from=carouselProgress;
+      const distance=Math.abs(target-from);
+      if(distance<.001){ carouselProgress=0; renderMoodCarousel(); return; }
+      carouselAnimating=true;
+      const started=performance.now();
+      const tick=now=>{
+        const p=Math.min(1,(now-started)/(duration+Math.max(0,distance-1)*90));
+        const eased=1-Math.pow(1-p,4);
+        carouselProgress=from+(target-from)*eased;
+        renderMoodCarousel(carouselProgress);
+        if(p<1){ carouselFrame=requestAnimationFrame(tick); return; }
+        const step=Math.round(target);
+        if(step) activeMoodIndex=wrapMoodIndex(activeMoodIndex+step);
+        carouselProgress=0;
+        carouselAnimating=false;
+        renderMoodCarousel(0);
+      };
+      carouselFrame=requestAnimationFrame(tick);
+    }
     function moveCarousel(direction) {
-      activeMoodIndex=(activeMoodIndex+direction+moods.length)%moods.length;
-      renderMoodCarousel();
+      if(!carouselAnimating) animateCarousel(direction);
     }
     function setTheme(m, withColor=true) {
       if(withColor) applyPalette(m);
@@ -520,8 +553,11 @@
       $('.edition').textContent=`SIDE A · 0${moods.indexOf(m)+1}/04`;
     }
     function openExperience(id) {
+      cancelAnimationFrame(carouselFrame);
+      carouselAnimating=false;
+      carouselProgress=0;
       activeMoodIndex=moods.findIndex(m=>m.id===id);
-      renderMoodCarousel();
+      renderMoodCarousel(0);
       selectTrack(moods.find(m=>m.id===id), true, true);
       $('#moodScreen').hidden=true; $('#experienceScreen').hidden=false; $('#dock').hidden=false; window.scrollTo({top:0,behavior:'smooth'});
     }
@@ -577,43 +613,51 @@
     function closeSheet(el) { el.classList.remove('open'); el.setAttribute('aria-hidden','true'); }
 
     const moodStage=$('#moods');
-    let dragStartX=0, dragDelta=0, dragPointerId=null, suppressMoodClick=false;
+    let dragStartX=0, dragDelta=0, dragPointerId=null, dragVelocity=0, dragLastX=0, dragLastTime=0, suppressMoodClick=false;
     moodStage.addEventListener('pointerdown',e=>{
-      if(e.pointerType==='mouse' && e.button!==0)return;
+      if(carouselAnimating||(e.pointerType==='mouse'&&e.button!==0))return;
       dragPointerId=e.pointerId;
       dragStartX=e.clientX;
+      dragLastX=e.clientX;
+      dragLastTime=performance.now();
+      dragVelocity=0;
       dragDelta=0;
     });
     moodStage.addEventListener('pointermove',e=>{
       if(e.pointerId!==dragPointerId)return;
       dragDelta=e.clientX-dragStartX;
+      const now=performance.now();
+      const elapsed=Math.max(1,now-dragLastTime);
+      dragVelocity=(e.clientX-dragLastX)/elapsed;
+      dragLastX=e.clientX;
+      dragLastTime=now;
       if(Math.abs(dragDelta)>4){
         moodStage.classList.add('dragging');
         if(!moodStage.hasPointerCapture(e.pointerId)) moodStage.setPointerCapture(e.pointerId);
-        const follow=Math.max(-150,Math.min(150,dragDelta*.82));
-        moodStage.style.setProperty('--drag-x',`${follow}px`);
+        carouselProgress=Math.max(-1.12,Math.min(1.12,-dragDelta/carouselSpacing()));
+        renderMoodCarousel(carouselProgress);
       }
     });
     moodStage.addEventListener('pointerup',e=>{
       if(e.pointerId!==dragPointerId)return;
       const wasDrag=Math.abs(dragDelta)>8;
-      const changeMood=Math.abs(dragDelta)>42;
+      const changeMood=Math.abs(dragDelta)>carouselSpacing()*.22||Math.abs(dragVelocity)>.38;
+      const target=changeMood?(dragDelta<0?1:-1):0;
       if(moodStage.hasPointerCapture(e.pointerId)) moodStage.releasePointerCapture(e.pointerId);
       dragPointerId=null;
       moodStage.classList.remove('dragging');
-      moodStage.style.setProperty('--drag-x','0px');
-      if(changeMood) moveCarousel(dragDelta<0?1:-1);
       if(wasDrag){ suppressMoodClick=true; setTimeout(()=>suppressMoodClick=false,0); }
       dragDelta=0;
+      animateCarousel(target,changeMood?330:260);
     });
-    moodStage.addEventListener('pointercancel',()=>{ dragPointerId=null; dragDelta=0; moodStage.classList.remove('dragging'); moodStage.style.setProperty('--drag-x','0px'); });
+    moodStage.addEventListener('pointercancel',()=>{ dragPointerId=null; dragDelta=0; moodStage.classList.remove('dragging'); animateCarousel(0,240); });
     $('#moods').addEventListener('click',e=>{
-      if(suppressMoodClick) return;
+      if(suppressMoodClick||carouselAnimating) return;
       const b=e.target.closest('[data-mood]');
       if(!b) return;
       const index=Number(b.dataset.index);
       if(index===activeMoodIndex) openExperience(b.dataset.mood);
-      else { activeMoodIndex=index; renderMoodCarousel(); }
+      else animateCarousel(circularMoodOffset(index-activeMoodIndex));
     });
     $('#moods').addEventListener('keydown',e=>{
       if(e.key==='ArrowLeft'){ e.preventDefault(); moveCarousel(-1); }
@@ -622,7 +666,8 @@
     });
     $('#moodPrev').addEventListener('click',()=>moveCarousel(-1));
     $('#moodNext').addEventListener('click',()=>moveCarousel(1));
-    $('#moodDots').addEventListener('click',e=>{ const dot=e.target.closest('[data-dot]'); if(dot){ activeMoodIndex=Number(dot.dataset.dot); renderMoodCarousel(); } });
+    $('#moodDots').addEventListener('click',e=>{ const dot=e.target.closest('[data-dot]'); if(dot&&!carouselAnimating) animateCarousel(circularMoodOffset(Number(dot.dataset.dot)-activeMoodIndex)); });
+    window.addEventListener('resize',()=>renderMoodCarousel(carouselProgress));
     $('#backBtn').addEventListener('click',openMoodPicker);
     $('#steps').addEventListener('click',e=>{ const b=e.target.closest('[data-step]'); if(b) selectStep(+b.dataset.step); });
     $('#playBtn').addEventListener('click',()=>isPlaying?stopSound():startSound());
