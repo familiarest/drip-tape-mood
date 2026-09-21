@@ -1,0 +1,800 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#070709">
+  <meta name="description" content="Дрип с Кавабангой — музыка и короткий ритуал заваривания кофе.">
+  <title>Дрип с Кавабангой — настроение в чашке</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23070709'/%3E%3Crect x='12' y='17' width='40' height='30' rx='6' fill='%23ff5dc8'/%3E%3Ccircle cx='24' cy='32' r='7' fill='%23070709'/%3E%3Ccircle cx='40' cy='32' r='7' fill='%23070709'/%3E%3Cpath d='M23 42h18' stroke='%23070709' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@500;600;700&display=swap');
+
+    :root {
+      color-scheme: dark;
+      --bg: #070709;
+      --surface: rgba(18, 18, 22, .72);
+      --surface-strong: rgba(24, 24, 30, .88);
+      --line: rgba(255, 255, 255, .11);
+      --muted: rgba(255, 255, 255, .6);
+      --text: #f7f6fb;
+      --a: #87909c;
+      --b: #3f4652;
+      --c: #c4c9d0;
+      --glow: rgba(129, 140, 153, .22);
+      --radius: 28px;
+    }
+
+    * { box-sizing: border-box; }
+    html { max-width: 100%; background: var(--bg); scroll-behavior: smooth; overflow-x: hidden; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      max-width: 100vw;
+      min-height: 100vh;
+      color: var(--text);
+      background: var(--bg);
+      font-family: Manrope, system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    button, textarea { font: inherit; }
+    button { color: inherit; }
+
+    .mesh {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+      background: radial-gradient(circle at 50% -10%, rgba(255,255,255,.06), transparent 34%);
+    }
+    .mesh i {
+      position: absolute;
+      border-radius: 999px;
+      filter: blur(78px);
+      opacity: .62;
+      transition: background 1600ms ease, opacity 1600ms ease;
+      will-change: transform;
+    }
+    .mesh i:nth-child(1) { width: 68vw; height: 68vw; left: -28vw; top: 3vh; background: var(--a); animation: drift-one 42s ease-in-out infinite; }
+    .mesh i:nth-child(2) { width: 64vw; height: 64vw; right: -31vw; top: 24vh; background: var(--b); animation: drift-two 49s ease-in-out infinite; }
+    .mesh i:nth-child(3) { width: 48vw; height: 48vw; left: 30vw; bottom: -25vw; background: var(--c); opacity: .34; animation: drift-three 56s ease-in-out infinite; }
+    @keyframes drift-one {
+      0%, 100% { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
+      28% { transform: translate3d(18vw, 8vh, 0) scale(1.14) rotate(7deg); }
+      62% { transform: translate3d(10vw, 30vh, 0) scale(.94) rotate(-5deg); }
+      82% { transform: translate3d(-4vw, 15vh, 0) scale(1.08) rotate(3deg); }
+    }
+    @keyframes drift-two {
+      0%, 100% { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
+      25% { transform: translate3d(-15vw, -10vh, 0) scale(.9) rotate(-6deg); }
+      55% { transform: translate3d(-26vw, 10vh, 0) scale(1.12) rotate(5deg); }
+      80% { transform: translate3d(-8vw, 20vh, 0) scale(1.02) rotate(-3deg); }
+    }
+    @keyframes drift-three {
+      0%, 100% { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
+      24% { transform: translate3d(-18vw, -12vh, 0) scale(1.16) rotate(8deg); }
+      58% { transform: translate3d(13vw, -28vh, 0) scale(.92) rotate(-7deg); }
+      83% { transform: translate3d(20vw, -8vh, 0) scale(1.1) rotate(4deg); }
+    }
+
+    .noise {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      opacity: .05;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+    }
+
+    .app { position: relative; z-index: 2; width: min(1180px, 100%); margin: 0 auto; padding: 22px clamp(18px, 4vw, 54px) 28px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; min-height: 48px; }
+    .brand { display: flex; align-items: center; min-width: 0; }
+    .brand-logo { display: block; width: clamp(116px, 13vw, 148px); height: auto; }
+    .edition { color: var(--muted); font-size: .75rem; letter-spacing: .12em; text-transform: uppercase; }
+
+    .screen { min-height: calc(100vh - 92px); padding-top: clamp(8vh, 12vh, 128px); }
+    .screen[hidden] { display: none; }
+    #moodScreen { min-height: calc(100svh - 70px); padding-bottom: 0; display: flex; flex-direction: column; }
+    #moodScreen[hidden] { display: none; }
+    .eyebrow { margin: 0 0 18px; color: rgba(255,255,255,.64); font-size: .76rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+    h1 { max-width: 850px; margin: 0; font-family: Unbounded, sans-serif; font-size: clamp(2.5rem, 7vw, 6.5rem); line-height: .98; letter-spacing: -.055em; text-wrap: balance; overflow-wrap: anywhere; }
+    .lead { max-width: 580px; margin: 24px 0 34px; color: rgba(255,255,255,.7); font-size: clamp(1rem, 2vw, 1.2rem); line-height: 1.55; }
+
+    .mood-carousel {
+      --wheel-size: min(720px, 90vw);
+      --wheel-bottom: clamp(-332px, -35vw, -248px);
+      position: relative;
+      width: min(900px, 100%);
+      flex: 1;
+      min-height: clamp(330px, 39vw, 430px);
+      margin: auto auto 0;
+    }
+    .moods {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: var(--wheel-size);
+      min-height: 0;
+      overflow: hidden;
+      touch-action: pan-y;
+      user-select: none;
+      outline: none;
+    }
+    .moods.dragging { cursor: grabbing; }
+    .mood {
+      position: absolute;
+      bottom: var(--wheel-bottom);
+      left: 50%;
+      width: var(--wheel-size);
+      aspect-ratio: 1;
+      padding: 0;
+      overflow: hidden;
+      border: 0;
+      border-radius: 50%;
+      background-color: #16161b;
+      background-position: center top;
+      background-size: cover;
+      cursor: pointer;
+      text-align: left;
+      clip-path: url(#moodSector);
+      transform-origin: 50% 50%;
+      will-change: transform, filter;
+      contain: layout paint;
+    }
+    .mood::before { content: ''; position: absolute; z-index: 0; inset: 0; background: linear-gradient(180deg, rgba(4,4,7,.04) 5%, rgba(4,4,7,.25) 32%, rgba(4,4,7,.94) 53%); }
+    .mood::after { content: ''; position: absolute; z-index: 1; inset: 0; background: linear-gradient(60deg, transparent 49.55%, rgba(255,255,255,.34) 49.85% 50.15%, transparent 50.45%), linear-gradient(-60deg, transparent 49.55%, rgba(255,255,255,.34) 49.85% 50.15%, transparent 50.45%), repeating-radial-gradient(circle at 50% 50%, transparent 0 9px, rgba(255,255,255,.13) 10px, transparent 11px 15px); opacity: .62; }
+    .mood.is-center { filter: saturate(1.05) brightness(1.05); }
+    .mood:focus-visible { outline: 2px solid rgba(255,255,255,.9); outline-offset: 4px; }
+    .mood-face { position: absolute; z-index: 3; top: 7%; left: 50%; width: 38%; min-width: 180px; display: flex; flex-direction: column; align-items: flex-start; opacity: 0; transform: translateX(-50%) rotate(var(--counter-angle, 0deg)); transform-origin: 50% 50%; transition: opacity 240ms ease; }
+    .mood.is-center .mood-face { opacity: 1; }
+    .mood-num, .mood-copy, .mood-open { position: relative; z-index: 1; }
+    .mood-num { padding: 7px 9px; color: rgba(255,255,255,.86); border: 1px solid rgba(255,255,255,.17); border-radius: 999px; background: rgba(5,5,8,.28); backdrop-filter: blur(12px); font-size: .64rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+    .mood-copy { width: 100%; margin-top: 25px; }
+    .mood strong { display: block; max-width: 100%; font: 600 clamp(1.04rem, 2vw, 1.5rem)/1.04 Unbounded, sans-serif; letter-spacing: -.04em; text-wrap: balance; }
+    .mood-copy small { display: block; margin-top: 8px; color: rgba(255,255,255,.68); font-size: .72rem; }
+    .mood-open { max-height: 0; margin-top: 0; overflow: hidden; color: rgba(255,255,255,.8); font-size: .68rem; opacity: 0; transition: max-height 360ms ease, margin 360ms ease, opacity 360ms ease; }
+    .mood.is-center .mood-open { max-height: 28px; margin-top: 13px; opacity: 1; }
+    .mood-nav { position: absolute; z-index: 8; top: 50%; width: 45px; height: 45px; display: grid; place-items: center; border: 1px solid rgba(255,255,255,.18); border-radius: 50%; background: rgba(10,10,13,.5); backdrop-filter: blur(14px); cursor: pointer; transform: translateY(-50%); transition: background 220ms ease, border-color 220ms ease; }
+    .mood-nav:hover { background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.3); }
+    .mood-nav.prev { left: 0; }
+    .mood-nav.next { right: 0; }
+    .moods::after { content: ''; position: absolute; z-index: 24; left: 50%; bottom: calc(var(--wheel-bottom) + var(--wheel-size) / 2 - 29px); width: 58px; aspect-ratio: 1; border: 1px solid rgba(255,255,255,.28); border-radius: 50%; background: radial-gradient(circle, #08080a 0 11%, #d8d7d2 12% 18%, #17171c 19% 47%, color-mix(in srgb, var(--a) 66%, #111116) 48% 70%, #0a0a0d 71%); box-shadow: 0 8px 24px rgba(0,0,0,.45), inset 0 1px rgba(255,255,255,.2); pointer-events: none; transform: translateX(-50%); }
+    .mood-carousel-foot { position: absolute; z-index: 30; left: 0; right: 0; bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 16px; min-height: 28px; color: rgba(255,255,255,.62); font-size: .72rem; text-shadow: 0 2px 8px rgba(0,0,0,.8); }
+    .mood-dots { display: flex; gap: 7px; }
+    .mood-dot { width: 6px; height: 6px; padding: 0; border: 0; border-radius: 999px; background: rgba(255,255,255,.28); cursor: pointer; transition: width 300ms ease, background 300ms ease; }
+    .mood-dot.active { width: 22px; background: #fff; }
+    .mood-count { font-variant-numeric: tabular-nums; letter-spacing: .1em; }
+
+    .experience { padding-top: 42px; padding-bottom: 112px; }
+    .experience-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; margin-bottom: 22px; min-width: 0; }
+    .experience-head > div { min-width: 0; }
+    .experience h1 { max-width: 100%; font-size: clamp(2.3rem, 5vw, 4.8rem); overflow-wrap: anywhere; }
+    .back { flex: 0 0 auto; padding: 8px 11px; border: 1px solid var(--line); border-radius: 999px; background: rgba(12,12,15,.45); font-size: .72rem; cursor: pointer; backdrop-filter: blur(12px); }
+    .back:hover { background: rgba(255,255,255,.09); }
+
+    .ritual-card { border: 1px solid var(--line); border-radius: var(--radius); background: linear-gradient(145deg, rgba(22,22,27,.87), rgba(10,10,13,.68)); backdrop-filter: blur(26px); box-shadow: 0 24px 70px rgba(0,0,0,.28); overflow: hidden; }
+    .ritual-top { display: flex; justify-content: space-between; gap: 20px; padding: 22px 24px 18px; border-bottom: 1px solid var(--line); }
+    .ritual-title { font-weight: 700; }
+    .ritual-meta { color: var(--muted); font-size: .88rem; }
+    #stepStatus { white-space: nowrap; }
+    .steps { display: grid; grid-template-columns: repeat(4, 1fr); }
+    .step { position: relative; padding: 22px 18px 24px; border: 0; border-right: 1px solid var(--line); background: transparent; text-align: left; cursor: pointer; opacity: .44; transition: opacity 220ms ease, background 220ms ease; }
+    .step:last-child { border-right: 0; }
+    .step.active, .step.done { opacity: 1; }
+    .step.active { background: linear-gradient(180deg, color-mix(in srgb, var(--a) 11%, transparent), transparent); }
+    .step-index { width: 30px; height: 30px; display: grid; place-items: center; margin-bottom: 42px; border: 1px solid var(--line); border-radius: 50%; font-size: .75rem; }
+    .step.done .step-index { color: #07120d; border-color: transparent; background: var(--a); }
+    .step h3 { margin: 0 0 8px; font-size: .95rem; }
+    .step p { margin: 0; color: var(--muted); font-size: .8rem; line-height: 1.45; }
+
+    .content-grid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(300px, .78fr); gap: 16px; margin-top: 16px; }
+    .player, .playlist { border: 1px solid var(--line); border-radius: var(--radius); background: rgba(14,14,18,.75); backdrop-filter: blur(24px); }
+    .player { min-height: 420px; padding: clamp(18px, 4vw, 30px); display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; }
+    .cover { position: relative; min-height: 335px; display: grid; place-items: center; overflow: hidden; border-radius: 22px; background-color: var(--b); background-position: center; background-size: cover; box-shadow: 0 30px 90px var(--glow); isolation: isolate; }
+    .cover::before { content: ''; position: absolute; z-index: -1; inset: 0; background: linear-gradient(145deg, rgba(0,0,0,.2), rgba(0,0,0,.7)), radial-gradient(circle at 50% 40%, transparent, rgba(0,0,0,.4)); backdrop-filter: blur(3px); }
+    .cover::after { content: ''; position: absolute; z-index: -1; width: 54%; aspect-ratio: 1; border-radius: 50%; background: var(--a); filter: blur(74px); opacity: .32; }
+    .vhs {
+      position: relative;
+      width: min(520px, 88%);
+      aspect-ratio: 1.72;
+      padding: 7.5% 8%;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.24);
+      border-radius: 18px;
+      background: linear-gradient(155deg, #27272d 0%, #101014 46%, #2b2b31 100%);
+      box-shadow: 0 28px 70px rgba(0,0,0,.58), inset 0 1px rgba(255,255,255,.13), inset 0 -5px 12px rgba(0,0,0,.55);
+      touch-action: none;
+      cursor: ew-resize;
+      transform: rotate(var(--cassette-tilt, 0deg));
+      transform-origin: 50% 50%;
+      transition: transform 240ms cubic-bezier(.22,.8,.3,1), box-shadow 240ms ease;
+    }
+    .vhs.scrubbing { cursor: grabbing; transition: none; box-shadow: 0 34px 82px rgba(0,0,0,.68), inset 0 1px rgba(255,255,255,.13), inset 0 -5px 12px rgba(0,0,0,.55); }
+    .vhs::before { content: ''; position: absolute; inset: 3.8%; border: 1px solid rgba(255,255,255,.08); border-radius: 13px; box-shadow: inset 0 0 0 1px rgba(0,0,0,.5); }
+    .vhs::after { content: ''; position: absolute; left: 25%; right: 25%; bottom: -2%; height: 15%; border: 1px solid rgba(255,255,255,.1); border-radius: 8px 8px 0 0; background: #0b0b0e; clip-path: polygon(12% 0,88% 0,100% 100%,0 100%); }
+    .vhs-screw { position: absolute; z-index: 4; width: 8px; height: 8px; border-radius: 50%; background: radial-gradient(circle, #09090b 0 25%, #74747c 28% 42%, #19191d 46%); box-shadow: 0 1px 2px rgba(0,0,0,.8); }
+    .vhs-screw.one { left: 4.5%; top: 7%; }
+    .vhs-screw.two { right: 4.5%; top: 7%; }
+    .vhs-screw.three { left: 5%; bottom: 8%; }
+    .vhs-screw.four { right: 5%; bottom: 8%; }
+    .vhs-label { position: relative; z-index: 2; height: 100%; padding: 5% 6%; border-radius: 9px; color: #141316; background: linear-gradient(135deg, #f2eee7 0 62%, color-mix(in srgb, var(--a) 52%, #f2eee7) 62% 100%); box-shadow: inset 0 0 0 1px rgba(0,0,0,.16), 0 4px 14px rgba(0,0,0,.38); }
+    .vhs-copy { position: relative; z-index: 3; display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+    .vhs-copy span { font: 700 clamp(.42rem, 1.1vw, .62rem)/1 Unbounded, sans-serif; letter-spacing: .12em; text-transform: uppercase; }
+    .vhs-copy strong { max-width: 70%; overflow: hidden; font: 600 clamp(.82rem, 2vw, 1.35rem)/1 Unbounded, sans-serif; letter-spacing: -.04em; text-align: right; text-overflow: ellipsis; white-space: nowrap; }
+    .vhs-window { position: absolute; z-index: 3; left: 14%; right: 14%; top: 38%; height: 38%; display: flex; align-items: center; justify-content: space-between; padding-inline: 8%; border: 5px solid #2d2d32; border-radius: 999px; background: linear-gradient(180deg, #08080a, #1a1a1f); box-shadow: inset 0 5px 12px rgba(0,0,0,.8), 0 1px rgba(255,255,255,.4); }
+    .vhs-window::before { content: ''; position: absolute; left: 24%; right: 24%; top: 50%; height: 3px; background: #35231c; box-shadow: 0 0 4px rgba(178,105,68,.3); transform: translateY(-50%); }
+    .reel { position: relative; width: 33%; aspect-ratio: 1; border-radius: 50%; background: repeating-conic-gradient(from 0deg, #e4e0d9 0 12deg, #77777e 12deg 23deg); box-shadow: 0 0 0 5px #111114, inset 0 0 0 5px rgba(255,255,255,.18); animation: reel-spin 2.8s linear infinite; animation-play-state: paused; }
+    .reel::after { content: ''; position: absolute; inset: 31%; border-radius: 50%; background: #17171a; box-shadow: inset 0 0 0 3px #86868e; }
+    .cover.playing .reel { animation-play-state: running; }
+    .vhs-mark { position: absolute; z-index: 3; left: 50%; bottom: 6%; color: rgba(20,19,22,.62); font: 700 clamp(.38rem, 1vw, .55rem)/1 Unbounded, sans-serif; letter-spacing: .13em; transform: translateX(-50%); white-space: nowrap; }
+    .vhs-position { position: absolute; z-index: 4; left: 10%; right: 10%; bottom: 2.8%; height: 3px; overflow: hidden; border-radius: 999px; background: rgba(15,15,18,.2); }
+    .vhs-position b { display: block; width: 0; height: 100%; border-radius: inherit; background: rgba(15,15,18,.75); }
+    @keyframes reel-spin { to { transform: rotate(360deg); } }
+    .track-line { display: grid; grid-template-columns: auto 1fr auto; gap: 16px; align-items: center; margin-top: 24px; }
+    .play { width: 56px; min-width: 56px; height: 56px; padding: 0; display: grid; place-items: center; border: 0; border-radius: 50%; background: #fff; color: #0a0a0c; line-height: 0; cursor: pointer; box-shadow: 0 8px 30px rgba(255,255,255,.13); }
+    .play svg { display: block; width: 20px; height: 20px; overflow: visible; fill: currentColor; }
+    .play:not(.is-playing) svg { transform: translateX(1px); }
+    .track-copy strong { display: block; font-size: 1rem; }
+    .track-copy span { color: var(--muted); font-size: .78rem; }
+    .time { color: var(--muted); font-variant-numeric: tabular-nums; font-size: .78rem; }
+    .progress { grid-column: 2 / 4; position: relative; width: 100%; height: 16px; border-radius: 999px; background: transparent; cursor: pointer; touch-action: none; overflow: hidden; }
+    .progress::before { content: ''; position: absolute; inset: 6px 0; border-radius: inherit; background: rgba(255,255,255,.14); }
+    .progress b { position: absolute; left: 0; top: 6px; display: block; width: 0%; height: 4px; border-radius: inherit; background: #fff; }
+    .seek-input { position: absolute; z-index: 5; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: ew-resize; touch-action: none; }
+    .vhs > .seek-input { z-index: 12; cursor: grab; }
+    .vhs.scrubbing > .seek-input { cursor: grabbing; }
+
+    .playlist { padding: 22px; }
+    .playlist h2 { margin: 0 0 18px; font: 600 1rem/1.2 Unbounded, sans-serif; }
+    .track-item { width: 100%; display: grid; grid-template-columns: 42px 1fr auto; align-items: center; gap: 12px; padding: 11px; border: 0; border-radius: 14px; background: transparent; text-align: left; cursor: pointer; }
+    .track-item:hover, .track-item.current { background: rgba(255,255,255,.07); }
+    .track-art { width: 42px; aspect-ratio: 1; border-radius: 11px; background-color: var(--x); background-position: center; background-size: cover; }
+    .track-item strong { display: block; font-size: .84rem; }
+    .track-item small { color: var(--muted); font-size: .7rem; }
+    .track-duration { color: var(--muted); font-size: .72rem; }
+    .actions { display: grid; gap: 9px; margin-top: 22px; }
+    .action { width: 100%; padding: 14px 16px; border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,.04); cursor: pointer; text-align: left; }
+    .action:hover { background: rgba(255,255,255,.08); }
+
+    .sheet { position: fixed; inset: 0; z-index: 10; display: grid; align-items: end; background: rgba(0,0,0,.58); backdrop-filter: blur(12px); opacity: 0; pointer-events: none; transition: opacity 240ms ease; }
+    .sheet.open { opacity: 1; pointer-events: auto; }
+    .sheet-panel { width: min(680px, 100%); max-height: 86vh; margin: 0 auto; padding: 26px clamp(20px, 5vw, 42px) calc(28px + env(safe-area-inset-bottom)); overflow: auto; border: 1px solid var(--line); border-bottom: 0; border-radius: 30px 30px 0 0; background: #111115; transform: translateY(30px); transition: transform 240ms ease; }
+    .sheet.open .sheet-panel { transform: translateY(0); }
+    .sheet-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+    .sheet h2 { margin: 0; font: 600 clamp(1.5rem, 5vw, 2.3rem)/1.1 Unbounded, sans-serif; letter-spacing: -.04em; }
+    .close { width: 40px; height: 40px; border: 1px solid var(--line); border-radius: 50%; background: transparent; cursor: pointer; }
+    .facts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 24px 0; }
+    .fact { padding: 16px; border: 1px solid var(--line); border-radius: 16px; }
+    .fact small { display: block; margin-bottom: 6px; color: var(--muted); }
+    .sheet-copy { color: rgba(255,255,255,.76); line-height: 1.65; }
+    .rating { display: flex; gap: 8px; margin: 22px 0; }
+    .star { width: 46px; height: 46px; border: 1px solid var(--line); border-radius: 13px; background: transparent; font-size: 1.25rem; cursor: pointer; }
+    .star.selected { color: #ffd057; background: rgba(255,208,87,.12); border-color: rgba(255,208,87,.45); }
+    textarea { width: 100%; min-height: 120px; padding: 15px; color: #fff; border: 1px solid var(--line); border-radius: 15px; background: rgba(255,255,255,.045); resize: vertical; outline: none; }
+    textarea:focus { border-color: rgba(255,255,255,.35); }
+    .submit { width: 100%; margin-top: 12px; padding: 15px; border: 0; border-radius: 15px; background: #fff; color: #08080a; font-weight: 800; cursor: pointer; }
+    .toast { position: fixed; z-index: 20; left: 50%; bottom: 26px; padding: 13px 18px; border: 1px solid var(--line); border-radius: 999px; background: #18181d; transform: translate(-50%, 120px); transition: transform 260ms ease; white-space: nowrap; box-shadow: 0 12px 40px rgba(0,0,0,.4); }
+    .toast.show { transform: translate(-50%, 0); }
+
+    .dock {
+      position: fixed;
+      z-index: 8;
+      left: 50%;
+      bottom: max(14px, env(safe-area-inset-bottom));
+      width: min(620px, calc(100vw - 28px));
+      min-width: 0;
+      display: grid;
+      grid-template-columns: 52px minmax(0, 1fr) auto auto;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 20px;
+      background: rgba(14,14,18,.88);
+      box-shadow: 0 18px 60px rgba(0,0,0,.48), 0 0 40px var(--glow);
+      backdrop-filter: blur(26px);
+      transform: translateX(-50%);
+    }
+    .dock[hidden] { display: none; }
+    .dock-progress { position: absolute; inset: 0 0 auto; height: 16px; background: transparent; cursor: ew-resize; touch-action: none; }
+    .dock-progress::before { content: ''; position: absolute; inset: 0 0 auto; height: 3px; background: rgba(255,255,255,.1); }
+    .dock-progress b { position: absolute; left: 0; top: 0; display: block; width: 0; height: 3px; background: var(--a); }
+    .dock-art { width: 52px; aspect-ratio: 1; border-radius: 13px; background-position: center; background-size: cover; }
+    .dock-copy { min-width: 0; }
+    .dock-copy strong, .dock-copy span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .dock-copy strong { font-size: .9rem; }
+    .dock-copy span, .dock-time { color: var(--muted); font-size: .72rem; }
+    .dock-play { width: 44px; min-width: 44px; height: 44px; padding: 0; display: grid; place-items: center; border: 0; border-radius: 50%; background: #fff; color: #09090b; line-height: 0; cursor: pointer; }
+    .dock-play svg { display: block; width: 18px; height: 18px; overflow: visible; fill: currentColor; }
+    .dock-play:not(.is-playing) svg { transform: translateX(1px); }
+
+    @media (max-width: 820px) {
+      .content-grid { grid-template-columns: 1fr; }
+      .steps { grid-template-columns: 1fr 1fr; }
+      .step:nth-child(2) { border-right: 0; }
+      .step:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+      .player { min-height: auto; }
+    }
+    @media (max-width: 520px) {
+      .app { padding-inline: 14px; }
+      .brand-logo { width: 118px; }
+      .edition { display: none; }
+      .screen { padding-top: 4vh; }
+      #moodScreen h1 { font-size: clamp(2.05rem, 10vw, 3rem); }
+      .lead { margin: 16px 0 22px; font-size: .95rem; }
+      #moodScreen { min-height: calc(100svh - 70px); }
+      .mood-carousel { --wheel-size: calc(100vw - 16px); --wheel-bottom: 0px; width: calc(100% + 28px); min-height: calc(100vw - 16px); margin-inline: -14px; }
+      .moods { height: var(--wheel-size); margin-inline: 0; }
+      .mood-face { top: 7%; width: 34%; min-width: 0; }
+      .mood-num { font-size: .58rem; }
+      .mood strong { font-size: clamp(.96rem, 4.3vw, 1.16rem); }
+      .mood-copy { margin-top: 25px; }
+      .mood-nav { width: 38px; height: 38px; }
+      .mood-nav.prev { left: -2px; }
+      .mood-nav.next { right: -2px; }
+      .experience { padding-top: 24px; }
+      .experience-head { position: relative; display: block; }
+      .experience-head .eyebrow { padding-right: 92px; }
+      .experience-head .back { position: absolute; top: -10px; right: 0; }
+      .experience h1 { font-size: clamp(1.9rem, 8.3vw, 2.4rem); line-height: 1.04; overflow-wrap: normal; word-break: normal; }
+      .ritual-top { gap: 10px; padding-inline: 18px; }
+      .steps { grid-template-columns: 1fr; }
+      .step { display: grid; grid-template-columns: 36px 1fr; column-gap: 12px; padding: 15px; border-right: 0; border-bottom: 1px solid var(--line); }
+      .step:last-child { border-bottom: 0; }
+      .step-index { grid-row: 1 / 3; margin: 0; }
+      .step h3 { align-self: end; }
+      .facts { grid-template-columns: 1fr; }
+      .cover { min-height: 240px; }
+      .track-line { grid-template-columns: auto 1fr; }
+      .play { width: 48px; min-width: 48px; height: 48px; }
+      .time { display: none; }
+      .progress { grid-column: 2; }
+      .dock { bottom: max(8px, env(safe-area-inset-bottom)); width: calc(100vw - 16px); grid-template-columns: 46px minmax(0,1fr) auto; padding: 8px 10px; border-radius: 17px; }
+      .dock-art { width: 46px; border-radius: 11px; }
+      .dock-time { display: none; }
+      .dock-play { width: 40px; min-width: 40px; height: 40px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+    }
+  </style>
+</head>
+<body>
+  <svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute">
+    <defs><clipPath id="moodSector" clipPathUnits="objectBoundingBox"><path d="M .5 .5 L .066987 .25 A .5 .5 0 0 1 .933013 .25 Z"/></clipPath></defs>
+  </svg>
+  <div class="mesh" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="noise" aria-hidden="true"></div>
+  <main class="app">
+    <header class="topbar">
+      <div class="brand"><img class="brand-logo" src="artwork/kavabanga-logo.svg" alt="Кавабанга"></div>
+      <div class="edition">SIDE A · 01/03</div>
+    </header>
+
+    <section class="screen" id="moodScreen">
+      <p class="eyebrow">Сначала — ты. Потом — кофе.</p>
+      <h1>Выбери настроение</h1>
+      <p class="lead">Мы подберём звук, цвет и проведём тебя через короткий ритуал заваривания.</p>
+      <div class="mood-carousel">
+        <div class="moods" id="moods" role="group" aria-label="Выбор настроения" tabindex="0"></div>
+        <div class="mood-carousel-foot">
+          <span class="mood-count" id="moodCount">01 / 03</span>
+          <div class="mood-dots" id="moodDots" aria-label="Позиция в списке"></div>
+          <span>Свайпни, чтобы листать</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen experience" id="experienceScreen" hidden>
+      <div class="experience-head">
+        <div><p class="eyebrow">Твоё настроение</p><h1 id="moodTitle">Расслабление</h1></div>
+        <button class="back" id="backBtn" type="button">← Сменить</button>
+      </div>
+
+      <section class="ritual-card" aria-labelledby="ritualTitle">
+        <div class="ritual-top">
+          <div><div class="ritual-title" id="ritualTitle">Завариваем вместе</div><div class="ritual-meta">Дрип 12 г · вода 200 мл · 92–94 °C</div></div>
+          <div class="ritual-meta" id="stepStatus">Шаг 1 из 4</div>
+        </div>
+        <div class="steps" id="steps"></div>
+      </section>
+
+      <div class="content-grid">
+        <section class="player" aria-label="Музыкальный плеер">
+          <div class="cover" aria-label="VHS-кассета текущего трека">
+            <div class="vhs" id="cassette" role="slider" aria-label="Перемотка кассеты" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0">
+              <input class="seek-input" id="cassetteSeek" type="range" min="0" max="100" step="0.1" value="0" aria-label="Перемотка кассеты">
+              <i class="vhs-screw one"></i><i class="vhs-screw two"></i><i class="vhs-screw three"></i><i class="vhs-screw four"></i>
+              <div class="vhs-label">
+                <div class="vhs-copy"><span>KAVABANGA · DRIP</span><strong id="coverTitle">Who am I</strong></div>
+                <div class="vhs-window"><i class="reel"></i><i class="reel"></i></div>
+                <span class="vhs-mark">← КРУТИ, ЧТОБЫ ПЕРЕМОТАТЬ →</span>
+                <span class="vhs-position" aria-hidden="true"><b id="cassetteProgress"></b></span>
+              </div>
+            </div>
+          </div>
+          <div class="track-line">
+            <button class="play" id="playBtn" type="button" aria-label="Воспроизвести">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path id="playIcon" d="M8 5v14l11-7z"/></svg>
+            </button>
+            <div class="track-copy"><strong id="trackTitle">Between Leaves</strong><span id="trackArtist">Drip Tape Radio</span></div>
+            <div class="time"><span id="timeNow">0:00</span> / <span id="timeTotal">3:42</span></div>
+            <div class="progress" id="progress" role="slider" aria-label="Позиция трека" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0"><b></b><input class="seek-input" id="mainSeek" type="range" min="0" max="100" step="0.1" value="0" aria-label="Позиция трека"></div>
+          </div>
+        </section>
+
+        <aside class="playlist">
+          <h2>Твоя кассета</h2>
+          <div id="playlist"></div>
+          <div class="actions">
+            <button class="action" type="button" data-sheet="coffee">Узнать больше о кофе →</button>
+            <button class="action" type="button" data-sheet="review">Оставить отзыв →</button>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <div class="dock" id="dock" hidden aria-label="Закреплённый музыкальный плеер">
+    <div class="dock-progress" id="dockProgress" role="slider" aria-label="Позиция трека" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0"><b id="dockProgressBar"></b><input class="seek-input" id="dockSeek" type="range" min="0" max="100" step="0.1" value="0" aria-label="Позиция трека"></div>
+    <div class="dock-art" id="dockArt" aria-hidden="true"></div>
+    <div class="dock-copy"><strong id="dockTitle">Who am I</strong><span id="dockArtist">KVBNG</span></div>
+    <span class="dock-time" id="dockTime">0:00</span>
+    <button class="dock-play" id="dockPlayBtn" type="button" aria-label="Воспроизвести"><svg viewBox="0 0 24 24" aria-hidden="true"><path id="dockPlayIcon" d="M8 5v14l11-7z"/></svg></button>
+  </div>
+
+  <div class="sheet" id="coffeeSheet" aria-hidden="true">
+    <div class="sheet-panel" role="dialog" aria-modal="true" aria-labelledby="coffeeTitle">
+      <div class="sheet-head"><h2 id="coffeeTitle">Эфиопия · Guji</h2><button class="close" type="button" aria-label="Закрыть">✕</button></div>
+      <div class="facts">
+        <div class="fact"><small>Регион</small><strong>Guji, Oromia</strong></div>
+        <div class="fact"><small>Обработка</small><strong>Натуральная</strong></div>
+        <div class="fact"><small>Высота</small><strong>1 900–2 100 м</strong></div>
+        <div class="fact"><small>Во вкусе</small><strong>Персик · какао · чай</strong></div>
+      </div>
+      <p class="sheet-copy">Мягкий и ароматный кофе для неторопливой чашки. В начале — спелый персик, затем лёгкая сладость какао и чистое чайное послевкусие. Данные здесь демонстрационные: заменим их точной карточкой твоего зерна.</p>
+    </div>
+  </div>
+
+  <div class="sheet" id="reviewSheet" aria-hidden="true">
+    <form class="sheet-panel" id="reviewForm">
+      <div class="sheet-head"><h2>Как тебе эта чашка?</h2><button class="close" type="button" aria-label="Закрыть">✕</button></div>
+      <div class="rating" aria-label="Оценка"><button class="star" type="button" data-rate="1">★</button><button class="star" type="button" data-rate="2">★</button><button class="star" type="button" data-rate="3">★</button><button class="star" type="button" data-rate="4">★</button><button class="star" type="button" data-rate="5">★</button></div>
+      <textarea id="reviewText" placeholder="Пара слов о кофе, музыке или настроении…" aria-label="Текст отзыва"></textarea>
+      <button class="submit" type="submit">Отправить отзыв</button>
+    </form>
+  </div>
+  <div class="toast" id="toast" role="status">Спасибо. Отзыв сохранён ♥</div>
+
+  <script>
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    requestAnimationFrame(()=>window.scrollTo(0,0));
+    const moods = [
+      {
+        id:'relax', name:'Расслабление', hint:'спокойствие', artwork:'artwork/nostalgia.webp',
+        colors:['#d29a66','#753f2c','#ffcf8f'], glow:'rgba(204,126,65,.3)',
+        tracks:[
+          { id:'downtown', title:'downtown', artist:'KVBNG', src:'audio/kvbng-downtown.mp3', artwork:'artwork/nostalgia.webp', duration:166.752 },
+          { id:'who-am-i', title:'Who am I', artist:'KVBNG', src:'audio/kvbng-who-am-i.mp3', artwork:'artwork/calm.webp', duration:198.672 }
+        ]
+      },
+      {
+        id:'bloom', name:'Расцветание', hint:'регги · тепло', artwork:'artwork/calm.webp',
+        colors:['#52dca4','#176b87','#78d8ff'], glow:'rgba(54,190,177,.3)',
+        tracks:[{ id:'cake-gut', title:'Cake Gut', artist:'KVBNG', src:'audio/kvbng-cake-gut.mp3', artwork:'artwork/sun.webp', duration:195.912 }]
+      },
+      {
+        id:'charge', name:'Заряд', hint:'энергия', artwork:'artwork/charge.webp',
+        colors:['#ff6938','#e32482','#ffb321'], glow:'rgba(255,70,91,.32)',
+        tracks:[{ id:'keep-it-local', title:'Keep it local', artist:'KVBNG', src:'audio/kvbng-keep-it-local.mp3', artwork:'artwork/charge.webp', duration:158.112 }]
+      }
+    ];
+    const neutralTheme = { colors:['#87909c','#3f4652','#c4c9d0'], glow:'rgba(129,140,153,.22)' };
+    const stepsData = [
+      ['Открой', 'Разверни ушки дрипа и поставь его на чашку.'],
+      ['Смочи', 'Влей 40 мл воды и подожди 30 секунд.'],
+      ['Долей', 'Медленно доведи общий объём до 200 мл.'],
+      ['Наслаждайся', 'Сними дрип, перемешай и дай чашке минуту.']
+    ];
+
+    const $ = (s, root=document) => root.querySelector(s);
+    const $$ = (s, root=document) => [...root.querySelectorAll(s)];
+    let selectedMood = moods[0], selected = selectedMood.tracks[0], currentTrackDuration = selected.duration, activeMoodIndex = 0, currentStep = 0, isPlaying = false, fadeFrame = 0, pendingSeek = null;
+    let carouselProgress = 0, carouselFrame = 0, carouselAnimating = false;
+    const audio = new Audio();
+    audio.preload = 'metadata';
+
+    $('#moods').innerHTML = moods.map((m,i) => `<button class="mood" type="button" data-mood="${m.id}" data-index="${i}" style="--mood:${m.colors[0]};background-image:url('${m.artwork}')" aria-label="${m.name}. ${m.hint}"><span class="mood-face"><span class="mood-num">0${i+1} · ${m.hint}</span><span class="mood-copy"><strong>${m.name}</strong></span><span class="mood-open">Открыть настроение ↗</span></span></button>`).join('');
+    $('#moodDots').innerHTML = moods.map((_,i) => `<button class="mood-dot" type="button" data-dot="${i}" aria-label="Настроение ${i+1}"></button>`).join('');
+    $('#steps').innerHTML = stepsData.map((s,i) => `<button class="step ${i===0?'active':''}" type="button" data-step="${i}"><span class="step-index">${i+1}</span><h3>${s[0]}</h3><p>${s[1]}</p></button>`).join('');
+    renderPlaylist();
+
+    function format(seconds) { const n=Math.max(0,Math.floor(seconds)); return `${Math.floor(n/60)}:${String(n%60).padStart(2,'0')}`; }
+    function applyPalette(theme) {
+      const root=document.documentElement.style;
+      root.setProperty('--a',theme.colors[0]); root.setProperty('--b',theme.colors[1]); root.setProperty('--c',theme.colors[2]); root.setProperty('--glow',theme.glow);
+    }
+    function renderPlaylist() {
+      $('#playlist').innerHTML=selectedMood.tracks.map(track=>`<button class="track-item${track.id===selected.id?' current':''}" type="button" data-track="${track.id}"><span class="track-art" style="--x:${selectedMood.colors[0]};background-image:url('${track.artwork}')"></span><span><strong>${track.title}</strong><small>${track.artist}</small></span><span class="track-duration">${format(track.duration)}</span></button>`).join('');
+    }
+    const wrapMoodIndex=index=>(index%moods.length+moods.length)%moods.length;
+    function circularMoodOffset(value) {
+      const half=moods.length/2;
+      return ((value+half)%moods.length+moods.length)%moods.length-half;
+    }
+    function carouselSpacing() {
+      return Math.min($('#moods').getBoundingClientRect().width*.34,window.innerWidth<560?132:190);
+    }
+    function renderMoodCarousel(progress=carouselProgress) {
+      const previewCenter=wrapMoodIndex(activeMoodIndex+Math.round(progress));
+      $$('.mood').forEach((card,index)=>{
+        const offset=circularMoodOffset(index-activeMoodIndex-progress);
+        const distance=Math.min(1.5,Math.abs(offset));
+        const angle=offset*(360/moods.length);
+        const fade=Math.min(1,distance);
+        const brightness=1-fade*.52;
+        const saturation=1-fade*.38;
+        card.style.transform=`translateX(-50%) rotate(${angle.toFixed(2)}deg)`;
+        card.style.opacity=(1-fade*.52).toFixed(3);
+        card.style.filter=`saturate(${Math.max(.55,saturation).toFixed(3)}) brightness(${Math.max(.45,brightness).toFixed(3)})`;
+        card.style.zIndex=String(index===previewCenter?12:10);
+        $('.mood-face',card).style.setProperty('--counter-angle',`${(-angle).toFixed(2)}deg`);
+        const isCenter=index===previewCenter;
+        card.classList.toggle('is-center',isCenter);
+        card.setAttribute('aria-current',index===activeMoodIndex&&Math.abs(progress)<.001?'true':'false');
+        card.tabIndex=index===activeMoodIndex&&Math.abs(progress)<.001?0:-1;
+      });
+      $$('.mood-dot').forEach((dot,index)=>dot.classList.toggle('active',index===activeMoodIndex));
+      $('#moodCount').textContent=`0${activeMoodIndex+1} / 0${moods.length}`;
+    }
+    function animateCarousel(target, duration=390) {
+      if(carouselAnimating)return;
+      cancelAnimationFrame(carouselFrame);
+      const from=carouselProgress;
+      const distance=Math.abs(target-from);
+      if(distance<.001){ carouselProgress=0; renderMoodCarousel(); return; }
+      carouselAnimating=true;
+      const started=performance.now();
+      const tick=now=>{
+        const p=Math.min(1,(now-started)/(duration+Math.max(0,distance-1)*90));
+        const eased=1-Math.pow(1-p,4);
+        carouselProgress=from+(target-from)*eased;
+        renderMoodCarousel(carouselProgress);
+        if(p<1){ carouselFrame=requestAnimationFrame(tick); return; }
+        const step=Math.round(target);
+        if(step) activeMoodIndex=wrapMoodIndex(activeMoodIndex+step);
+        carouselProgress=0;
+        carouselAnimating=false;
+        renderMoodCarousel(0);
+      };
+      carouselFrame=requestAnimationFrame(tick);
+    }
+    function moveCarousel(direction) {
+      if(!carouselAnimating) animateCarousel(direction);
+    }
+    function setTheme(track, withColor=true) {
+      currentTrackDuration=Number(track.duration)||0;
+      if(withColor) applyPalette(selectedMood);
+      $('#moodTitle').textContent=selectedMood.name; $('#coverTitle').textContent=track.title; $('#trackTitle').textContent=track.title; $('#trackArtist').textContent=track.artist; $('#timeTotal').textContent=format(track.duration);
+      $('.cover').style.backgroundImage=`url('${track.artwork}')`;
+      $('#dockArt').style.backgroundImage=`url('${track.artwork}')`;
+      $('#dockTitle').textContent=track.title; $('#dockArtist').textContent=track.artist;
+      ['#mainSeek','#dockSeek','#cassetteSeek'].forEach(id=>$(id).max=currentTrackDuration);
+      $$('.track-item').forEach(x=>x.classList.toggle('current',x.dataset.track===track.id));
+      $('.edition').textContent=`SIDE A · ${String(moods.indexOf(selectedMood)+1).padStart(2,'0')}/03`;
+    }
+    function openExperience(id) {
+      cancelAnimationFrame(carouselFrame);
+      carouselAnimating=false;
+      carouselProgress=0;
+      activeMoodIndex=moods.findIndex(m=>m.id===id);
+      selectedMood=moods[activeMoodIndex];
+      renderMoodCarousel(0);
+      selected=selectedMood.tracks[0];
+      renderPlaylist();
+      selectTrack(selected, true, true);
+      $('#moodScreen').hidden=true; $('#experienceScreen').hidden=false; $('#dock').hidden=false; window.scrollTo({top:0,behavior:'smooth'});
+    }
+    function openMoodPicker() { stopSound(); $('#experienceScreen').hidden=true; $('#dock').hidden=true; $('#moodScreen').hidden=false; applyPalette(neutralTheme); $('.edition').textContent='SIDE A · 01/03'; window.scrollTo({top:0,behavior:'smooth'}); }
+    function selectStep(index) {
+      currentStep=index;
+      $$('.step').forEach((x,i)=>{ x.classList.toggle('active',i===index); x.classList.toggle('done',i<index); x.querySelector('.step-index').textContent=i<index?'✓':i+1; });
+      $('#stepStatus').textContent=`Шаг ${index+1} из 4`;
+    }
+
+    function selectTrack(track, autoplay=false, withColor=true) {
+      cancelAnimationFrame(fadeFrame);
+      audio.pause();
+      selected=track;
+      pendingSeek=null;
+      audio.src=selected.src;
+      audio.currentTime=0;
+      audio.volume=0;
+      setTheme(selected,withColor);
+      updateProgress();
+      if (autoplay) startSound();
+    }
+    function fadeTo(target, duration, done) {
+      cancelAnimationFrame(fadeFrame);
+      const from=audio.volume, started=performance.now();
+      const tick=now=>{
+        const p=Math.min(1,(now-started)/duration);
+        const eased=p*p*(3-2*p);
+        audio.volume=Math.max(0,Math.min(1,from+(target-from)*eased));
+        if(p<1) fadeFrame=requestAnimationFrame(tick); else if(done) done();
+      };
+      fadeFrame=requestAnimationFrame(tick);
+    }
+    async function startSound() {
+      try {
+        audio.volume=0;
+        await audio.play();
+        isPlaying=true;
+        updatePlayIcon();
+        fadeTo(1,4000);
+      } catch (error) {
+        isPlaying=false;
+        updatePlayIcon();
+      }
+    }
+    function stopSound() {
+      if (audio.paused) return;
+      fadeTo(0,450,()=>{ audio.pause(); isPlaying=false; updatePlayIcon(); });
+    }
+    function updatePlayIcon() {
+      const path=isPlaying?'M7 6h4v12H7zm6 0h4v12h-4z':'M9 6.5v11l8.5-5.5z';
+      $('#playIcon').setAttribute('d',path); $('#dockPlayIcon').setAttribute('d',path);
+      $('#playBtn').setAttribute('aria-label',isPlaying?'Пауза':'Воспроизвести'); $('#dockPlayBtn').setAttribute('aria-label',isPlaying?'Пауза':'Воспроизвести');
+      $('#playBtn').classList.toggle('is-playing',isPlaying); $('#dockPlayBtn').classList.toggle('is-playing',isPlaying); $('.cover').classList.toggle('playing',isPlaying);
+    }
+    function audioDuration() { const media=Number(audio.duration); return Number.isFinite(media)&&media>0?media:currentTrackDuration; }
+    function seekTo(seconds) {
+      const duration=audioDuration(), requested=Number(seconds);
+      if(!duration||!Number.isFinite(requested))return;
+      const target=Math.min(duration,Math.max(0,requested));
+      pendingSeek=target;
+      try { audio.currentTime=target; if(audio.readyState>0)pendingSeek=null; } catch(error) {}
+      updateProgress(target);
+    }
+    function seekOn(element,clientX) { const r=element.getBoundingClientRect(); seekTo((clientX-r.left)/r.width*audioDuration()); }
+    function updateProgress(forcedTime=null) {
+      const duration=audioDuration(), rawCurrent=forcedTime??pendingSeek??audio.currentTime, current=Number.isFinite(Number(rawCurrent))?Number(rawCurrent):0, p=duration?current/duration*100:0;
+      $('.progress b').style.width=`${p}%`; $('#dockProgressBar').style.width=`${p}%`; $('#cassetteProgress').style.width=`${p}%`;
+      ['#progress','#dockProgress','#cassette'].forEach(id=>$(id).setAttribute('aria-valuenow',Math.round(p)));
+      ['#mainSeek','#dockSeek','#cassetteSeek'].forEach(id=>$(id).value=current);
+      $('#timeNow').textContent=format(current); $('#dockTime').textContent=format(current); $('#timeTotal').textContent=format(duration);
+    }
+    function bindNativeSeek(input) { input.addEventListener('input',()=>seekTo(Number(input.value))); }
+    function bindTimeline(element) {
+      let pointerId=null;
+      element.addEventListener('pointerdown',e=>{
+        if(e.pointerType==='mouse'&&e.button!==0)return;
+        e.preventDefault();
+        pointerId=e.pointerId; element.setPointerCapture(e.pointerId); seekOn(element,e.clientX);
+      });
+      element.addEventListener('pointermove',e=>{ if(e.pointerId===pointerId){ e.preventDefault(); seekOn(element,e.clientX); } });
+      const finish=e=>{ if(e.pointerId!==pointerId)return; if(element.hasPointerCapture(e.pointerId))element.releasePointerCapture(e.pointerId); pointerId=null; };
+      element.addEventListener('pointerup',finish); element.addEventListener('pointercancel',finish);
+      element.addEventListener('click',e=>{ const r=element.getBoundingClientRect(); seekOn(element,e.clientX||r.left+r.width/2); });
+      element.addEventListener('keydown',e=>{ if(e.key==='ArrowRight'){e.preventDefault();seekTo(audio.currentTime+5)} if(e.key==='ArrowLeft'){e.preventDefault();seekTo(audio.currentTime-5)} });
+    }
+    const cassette=$('#cassette');
+    const cassetteSeek=$('#cassetteSeek');
+    let cassettePointerId=null, cassetteStartX=0;
+    cassette.addEventListener('pointerdown',e=>{
+      if(e.target===cassetteSeek)return;
+      if(e.pointerType==='mouse'&&e.button!==0)return;
+      e.preventDefault();
+      cassettePointerId=e.pointerId; cassetteStartX=e.clientX; cassette.setPointerCapture(e.pointerId); cassette.classList.add('scrubbing'); seekOn(cassette,e.clientX);
+    });
+    cassette.addEventListener('pointermove',e=>{
+      if(e.target===cassetteSeek)return;
+      if(e.pointerId!==cassettePointerId)return;
+      e.preventDefault();
+      const delta=e.clientX-cassetteStartX, width=cassette.getBoundingClientRect().width;
+      seekOn(cassette,e.clientX);
+      cassette.style.setProperty('--cassette-tilt',`${Math.max(-5,Math.min(5,delta/width*10)).toFixed(2)}deg`);
+    });
+    function finishCassette(e) {
+      if(e.pointerId!==cassettePointerId)return;
+      if(cassette.hasPointerCapture(e.pointerId))cassette.releasePointerCapture(e.pointerId);
+      cassettePointerId=null; cassette.classList.remove('scrubbing'); cassette.style.setProperty('--cassette-tilt','0deg');
+    }
+    cassette.addEventListener('pointerup',finishCassette); cassette.addEventListener('pointercancel',finishCassette);
+    cassette.addEventListener('click',e=>{ const r=cassette.getBoundingClientRect(); seekOn(cassette,e.clientX||r.left+r.width/2); });
+    cassette.addEventListener('keydown',e=>{ if(e.key==='ArrowRight'){e.preventDefault();seekTo(audio.currentTime+5)} if(e.key==='ArrowLeft'){e.preventDefault();seekTo(audio.currentTime-5)} });
+    let cassetteSeekValue=0;
+    cassetteSeek.addEventListener('pointerdown',()=>{ cassetteSeekValue=Number(cassetteSeek.value); cassette.classList.add('scrubbing'); });
+    cassetteSeek.addEventListener('input',()=>{ const value=Number(cassetteSeek.value), duration=audioDuration()||1; cassette.style.setProperty('--cassette-tilt',`${Math.max(-5,Math.min(5,(value-cassetteSeekValue)/duration*28)).toFixed(2)}deg`); cassetteSeekValue=value; });
+    const finishNativeCassette=()=>{ cassette.classList.remove('scrubbing'); cassette.style.setProperty('--cassette-tilt','0deg'); };
+    cassetteSeek.addEventListener('pointerup',finishNativeCassette); cassetteSeek.addEventListener('pointercancel',finishNativeCassette); cassetteSeek.addEventListener('change',finishNativeCassette);
+    function openSheet(id) { const el=$(`#${id}Sheet`); el.classList.add('open'); el.setAttribute('aria-hidden','false'); setTimeout(()=>$('.close',el).focus(),100); }
+    function closeSheet(el) { el.classList.remove('open'); el.setAttribute('aria-hidden','true'); }
+
+    const moodStage=$('#moods');
+    let dragStartX=0, dragDelta=0, dragPointerId=null, dragVelocity=0, dragLastX=0, dragLastTime=0, suppressMoodClick=false;
+    moodStage.addEventListener('pointerdown',e=>{
+      if(carouselAnimating||(e.pointerType==='mouse'&&e.button!==0))return;
+      dragPointerId=e.pointerId;
+      dragStartX=e.clientX;
+      dragLastX=e.clientX;
+      dragLastTime=performance.now();
+      dragVelocity=0;
+      dragDelta=0;
+    });
+    moodStage.addEventListener('pointermove',e=>{
+      if(e.pointerId!==dragPointerId)return;
+      dragDelta=e.clientX-dragStartX;
+      const now=performance.now();
+      const elapsed=Math.max(1,now-dragLastTime);
+      dragVelocity=(e.clientX-dragLastX)/elapsed;
+      dragLastX=e.clientX;
+      dragLastTime=now;
+      if(Math.abs(dragDelta)>4){
+        e.preventDefault();
+        moodStage.classList.add('dragging');
+        if(!moodStage.hasPointerCapture(e.pointerId)) moodStage.setPointerCapture(e.pointerId);
+        carouselProgress=Math.max(-1.12,Math.min(1.12,-dragDelta/carouselSpacing()));
+        renderMoodCarousel(carouselProgress);
+      }
+    });
+    moodStage.addEventListener('pointerup',e=>{
+      if(e.pointerId!==dragPointerId)return;
+      const wasDrag=Math.abs(dragDelta)>8;
+      const changeMood=Math.abs(dragDelta)>carouselSpacing()*.22||Math.abs(dragVelocity)>.38;
+      const target=changeMood?(dragDelta<0?1:-1):0;
+      if(moodStage.hasPointerCapture(e.pointerId)) moodStage.releasePointerCapture(e.pointerId);
+      dragPointerId=null;
+      moodStage.classList.remove('dragging');
+      if(wasDrag){ suppressMoodClick=true; setTimeout(()=>suppressMoodClick=false,500); }
+      dragDelta=0;
+      animateCarousel(target,changeMood?330:260);
+    });
+    moodStage.addEventListener('pointercancel',()=>{ dragPointerId=null; dragDelta=0; moodStage.classList.remove('dragging'); animateCarousel(0,240); });
+    $('#moods').addEventListener('click',e=>{
+      if(suppressMoodClick||carouselAnimating) return;
+      const b=e.target.closest('[data-mood]');
+      if(!b) return;
+      const index=Number(b.dataset.index);
+      if(index===activeMoodIndex) openExperience(b.dataset.mood);
+      else animateCarousel(circularMoodOffset(index-activeMoodIndex));
+    });
+    $('#moods').addEventListener('keydown',e=>{
+      if(e.key==='ArrowLeft'){ e.preventDefault(); moveCarousel(-1); }
+      if(e.key==='ArrowRight'){ e.preventDefault(); moveCarousel(1); }
+      if((e.key==='Enter'||e.key===' ') && e.target===$('#moods')){ e.preventDefault(); openExperience(moods[activeMoodIndex].id); }
+    });
+    $('#moodDots').addEventListener('click',e=>{ const dot=e.target.closest('[data-dot]'); if(dot&&!carouselAnimating) animateCarousel(circularMoodOffset(Number(dot.dataset.dot)-activeMoodIndex)); });
+    window.addEventListener('resize',()=>renderMoodCarousel(carouselProgress));
+    $('#backBtn').addEventListener('click',openMoodPicker);
+    $('#steps').addEventListener('click',e=>{ const b=e.target.closest('[data-step]'); if(b) selectStep(+b.dataset.step); });
+    $('#playBtn').addEventListener('click',()=>isPlaying?stopSound():startSound());
+    $('#dockPlayBtn').addEventListener('click',()=>isPlaying?stopSound():startSound());
+    $('#playlist').addEventListener('click',e=>{ const b=e.target.closest('[data-track]'); if(!b)return; const track=selectedMood.tracks.find(item=>item.id===b.dataset.track); if(track)selectTrack(track,true); });
+    bindTimeline($('#progress'));
+    bindTimeline($('#dockProgress'));
+    bindNativeSeek($('#mainSeek'));
+    bindNativeSeek($('#dockSeek'));
+    bindNativeSeek($('#cassetteSeek'));
+    $$('.action').forEach(b=>b.addEventListener('click',()=>openSheet(b.dataset.sheet)));
+    $$('.sheet').forEach(s=>{ $('.close',s).addEventListener('click',()=>closeSheet(s)); s.addEventListener('click',e=>{if(e.target===s)closeSheet(s)}); });
+    document.addEventListener('keydown',e=>{if(e.key==='Escape')$$('.sheet.open').forEach(closeSheet)});
+
+    let rating=0;
+    $$('.star').forEach(star=>star.addEventListener('click',()=>{ rating=+star.dataset.rate; $$('.star').forEach(x=>x.classList.toggle('selected',+x.dataset.rate<=rating)); }));
+    $('#reviewForm').addEventListener('submit',e=>{ e.preventDefault(); const review={rating,text:$('#reviewText').value.trim(),at:new Date().toISOString()}; localStorage.setItem('dripTapeReview',JSON.stringify(review)); closeSheet($('#reviewSheet')); $('#toast').classList.add('show'); setTimeout(()=>$('#toast').classList.remove('show'),2500); });
+    audio.addEventListener('timeupdate',updateProgress);
+    audio.addEventListener('loadedmetadata',()=>{ if(pendingSeek!==null){ const target=pendingSeek; pendingSeek=null; audio.currentTime=target; } updateProgress(); });
+    audio.addEventListener('ended',()=>{ const index=selectedMood.tracks.indexOf(selected); const next=selectedMood.tracks[(index+1)%selectedMood.tracks.length]; selectTrack(next,true); });
+    audio.addEventListener('pause',()=>{ if(!audio.ended){ isPlaying=false; updatePlayIcon(); } });
+    selectTrack(selected,false,false);
+    renderMoodCarousel();
+    applyPalette(neutralTheme);
+    setInterval(()=>{ if(!$('#moodScreen').hidden&&!carouselAnimating&&dragPointerId===null) moveCarousel(1); },3000);
+  </script>
+</body>
+</html>
