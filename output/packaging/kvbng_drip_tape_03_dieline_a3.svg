@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420mm" height="297mm" viewBox="0 0 420 297">
+<title>KVBNG Drip Tape 03 — dieline A3</title>
+<rect width="420" height="297" fill="#fff"/>
+<g id="ARTWORK">
+<rect x="42" y="65" width="336" height="167" fill="#09090b"/>
+<path d="M 45 100 L 59 96 L 59 201 L 45 197 Z" fill="#09090b"/>
+<rect x="56" y="93" width="136" height="111" fill="#f2eee7"/>
+<path d="M 59 96 L 62 68 L 186 68 L 189 96 Z" fill="#f2eee7"/>
+<path d="M 59 201 L 62 221 L 186 221 L 189 201 Z" fill="#f2eee7"/>
+<rect x="189" y="93" width="28" height="111" fill="#e32482"/>
+<path d="M 189 96 L 191 73 L 215 73 L 217 96 Z" fill="#e32482"/>
+<path d="M 189 201 L 191 225 L 215 225 L 217 201 Z" fill="#e32482"/>
+<rect x="217" y="93" width="130" height="111" fill="#09090b"/>
+<path d="M 217 96 L 220 76 L 344 76 L 347 96 Z" fill="#09090b"/>
+<path d="M 217 201 L 220 229 L 344 229 L 347 201 Z" fill="#09090b"/>
+<rect x="347" y="93" width="31" height="111" fill="#54f0a9"/>
+<path d="M 347 96 L 349 73 L 373 73 L 375 96 Z" fill="#54f0a9"/>
+<path d="M 347 201 L 349 225 L 373 225 L 375 201 Z" fill="#54f0a9"/>
+<text x="68" y="108" font-family="Manrope" font-size="5.5px" font-weight="800" fill="#171619" text-anchor="start" letter-spacing="0.5px">SIDE B / КОФЕ + МУЗЫКА</text>
+<text x="68" y="124" font-family="Unbounded" font-size="16px" font-weight="900" fill="#171619" text-anchor="start">ТРИ ДРИПА.</text>
+<text x="68" y="136" font-family="Unbounded" font-size="16px" font-weight="900" fill="#171619" text-anchor="start">ОДИН ДЕНЬ.</text>
+<circle cx="70.5" cy="148.4" r="2" fill="#54f0a9"/>
+<text x="76" y="150" font-family="Manrope" font-size="5.2px" font-weight="800" fill="#171619" text-anchor="start">01</text>
+<text x="85" y="150" font-family="Unbounded" font-size="5.1px" font-weight="700" fill="#171619" text-anchor="start">ТИХОЕ УТРО</text>
+<circle cx="70.5" cy="157.4" r="2" fill="#ff6938"/>
+<text x="76" y="159" font-family="Manrope" font-size="5.2px" font-weight="800" fill="#171619" text-anchor="start">02</text>
+<text x="85" y="159" font-family="Unbounded" font-size="5.1px" font-weight="700" fill="#171619" text-anchor="start">СОЛНЦЕ ВНУТРИ</text>
+<circle cx="70.5" cy="166.4" r="2" fill="#e32482"/>
+<text x="76" y="168" font-family="Manrope" font-size="5.2px" font-weight="800" fill="#171619" text-anchor="start">03</text>
+<text x="85" y="168" font-family="Unbounded" font-size="5.1px" font-weight="700" fill="#171619" text-anchor="start">ЗАРЯД</text>
+<rect x="154" y="145" width="25" height="25" rx="1.5" fill="#09090b"/>
+<rect x="157" y="148" width="6" height="6" fill="#f2eee7"/>
+<rect x="158.5" y="149.5" width="3" height="3" fill="#09090b"/>
+<rect x="170" y="148" width="6" height="6" fill="#f2eee7"/>
+<rect x="171.5" y="149.5" width="3" height="3" fill="#09090b"/>
+<rect x="157" y="161" width="6" height="6" fill="#f2eee7"/>
+<rect x="158.5" y="162.5" width="3" height="3" fill="#09090b"/>
+<text x="166.5" y="160" font-family="Unbounded" font-size="5.2px" font-weight="700" fill="#f2eee7" text-anchor="middle">QR</text>
+<text x="166.5" y="176" font-family="Manrope" font-size="4.2px" font-weight="800" fill="#171619" text-anchor="middle">ССЫЛКА НА ПЛЕЕР</text>
+<text x="68" y="184" font-family="Manrope" font-size="5.2px" font-weight="800" fill="#171619" text-anchor="start">ОТКРОЙ · ПОСТАВЬ · 200 МЛ · НАЖМИ PLAY</text>
+<text x="68" y="193" font-family="Manrope" font-size="3.7px" font-weight="400" fill="#7f7b78" text-anchor="start">СОСТАВ / МАССА / ДАТА / ИЗГОТОВИТЕЛЬ — ДОБАВИТЬ ПЕРЕД ТИРАЖОМ</text>
+<rect x="227" y="105" width="110" height="87" rx="4" fill="#f2eee7"/>
+<path d="M 300 105 L 337 105 L 337 132 L 313 132 Z" fill="#54f0a9"/>
+<path d="M 313 132 L 337 132 L 337 150 L 321 150 Z" fill="#ff6938"/>
+<path d="M 321 150 L 337 150 L 337 192 L 331 192 Z" fill="#e32482"/>
+<text x="233" y="116" font-family="Unbounded" font-size="6px" font-weight="700" fill="#171619" text-anchor="start">&lt;&lt;&lt;  KAVABANGA</text>
+<text x="331" y="116" font-family="Manrope" font-size="5px" font-weight="800" fill="#171619" text-anchor="end">SIDE A</text>
+<text x="233" y="134" font-family="Unbounded" font-size="18px" font-weight="900" fill="#171619" text-anchor="start">DRIP</text>
+<text x="233" y="148" font-family="Unbounded" font-size="18px" font-weight="900" fill="#171619" text-anchor="start">TAPE</text>
+<text x="293" y="148" font-family="Unbounded" font-size="22px" font-weight="900" fill="#171619" text-anchor="start">03</text>
+<rect x="235" y="156" width="94" height="23" rx="11.5" fill="#09090b"/>
+<circle cx="258" cy="167.5" r="8.1" fill="#f2eee7"/>
+<circle cx="258" cy="167.5" r="4.6" fill="#09090b"/>
+<circle cx="258" cy="167.5" r="1.7" fill="#f2eee7"/>
+<circle cx="306" cy="167.5" r="8.1" fill="#f2eee7"/>
+<circle cx="306" cy="167.5" r="4.6" fill="#09090b"/>
+<circle cx="306" cy="167.5" r="1.7" fill="#f2eee7"/>
+<rect x="274" y="165.9" width="16" height="3.2" rx="1.5" fill="#ff6938"/>
+<text x="234" y="187" font-family="Manrope" font-size="5.1px" font-weight="800" fill="#171619" text-anchor="start">3 ПОРЦИИ · КОФЕ + МУЗЫКА</text>
+<text x="330" y="187" font-family="Manrope" font-size="4.2px" font-weight="600" fill="#171619" text-anchor="end">PLAY / BREW / REPEAT</text>
+<text x="207" y="192" font-family="Unbounded" font-size="5px" font-weight="700" fill="#171619" text-anchor="start" transform="rotate(90 207 192)">KAVABANGA / DRIP TAPE 03</text>
+<text x="365" y="192" font-family="Unbounded" font-size="4.6px" font-weight="700" fill="#171619" text-anchor="start" transform="rotate(90 365 192)">3 ДРИПА / ВКЛЮЧИ НАСТРОЕНИЕ</text>
+<text x="67" y="85" font-family="Unbounded" font-size="7px" font-weight="700" fill="#171619" text-anchor="start">OPEN / PLAY</text>
+<text x="282.0" y="218" font-family="Unbounded" font-size="6px" font-weight="700" fill="#f2eee7" text-anchor="middle">ДРИП С КАВАБАНГОЙ</text>
+<text x="361.0" y="85" font-family="Unbounded" font-size="8px" font-weight="900" fill="#171619" text-anchor="middle">03</text>
+</g>
+<g id="CUT" fill="none" stroke="#ff00a8" stroke-width="0.25">
+<path d="M 45 100 L 59 96"/>
+<path d="M 45 100 L 45 197"/>
+<path d="M 45 197 L 59 201"/>
+<path d="M 59 96 L 62 68 L 186 68 L 189 96"/>
+<path d="M 189 96 L 191 73 L 215 73 L 217 96"/>
+<path d="M 217 96 L 220 76 L 344 76 L 347 96"/>
+<path d="M 347 96 L 349 73 L 373 73 L 375 96"/>
+<path d="M 375 96 L 375 201"/>
+<path d="M 59 201 L 62 221 L 186 221 L 189 201"/>
+<path d="M 189 201 L 191 225 L 215 225 L 217 201"/>
+<path d="M 217 201 L 220 229 L 344 229 L 347 201"/>
+<path d="M 347 201 L 349 225 L 373 225 L 375 201"/>
+</g>
+<g id="CREASE" fill="none" stroke="#00aee8" stroke-width="0.25" stroke-dasharray="2.2 1.6">
+<line x1="59" y1="96" x2="59" y2="201"/>
+<line x1="189" y1="96" x2="189" y2="201"/>
+<line x1="217" y1="96" x2="217" y2="201"/>
+<line x1="347" y1="96" x2="347" y2="201"/>
+<line x1="59" y1="96" x2="189" y2="96"/>
+<line x1="59" y1="201" x2="189" y2="201"/>
+<line x1="189" y1="96" x2="217" y2="96"/>
+<line x1="189" y1="201" x2="217" y2="201"/>
+<line x1="217" y1="96" x2="347" y2="96"/>
+<line x1="217" y1="201" x2="347" y2="201"/>
+<line x1="347" y1="96" x2="375" y2="96"/>
+<line x1="347" y1="201" x2="375" y2="201"/>
+</g>
+<g id="NOTES">
+<text x="45" y="40" font-family="Unbounded" font-size="12px" font-weight="900" fill="#171619" text-anchor="start">KVBNG / DRIP TAPE 03</text>
+<text x="45" y="50" font-family="Manrope" font-size="6.2px" font-weight="800" fill="#09090b" text-anchor="start" letter-spacing="0.3px">РАЗВЕРТКА 1:1 · A3 LANDSCAPE · 130 × 105 × 28 ММ</text>
+<text x="375" y="42" font-family="Manrope" font-size="5.5px" font-weight="800" fill="#7f7b78" text-anchor="end">ПРОТОТИП V1</text>
+<text x="45" y="255" font-family="Manrope" font-size="5.2px" font-weight="800" fill="#ff00a8" text-anchor="start">РЕЗ</text>
+<line x1="58" y1="253.5" x2="74" y2="253.5" stroke="#ff00a8" stroke-width=".5"/>
+<text x="86" y="255" font-family="Manrope" font-size="5.2px" font-weight="800" fill="#00aee8" text-anchor="start">БИГ</text>
+<line x1="100" y1="253.5" x2="116" y2="253.5" stroke="#00aee8" stroke-width=".5" stroke-dasharray="2.2 1.6"/>
+<text x="130" y="255" font-family="Manrope" font-size="4.9px" font-weight="600" fill="#7f7b78" text-anchor="start">ВЫЛЕТЫ 3 ММ · БЕЛЫЙ МЕЛОВАННЫЙ КАРТОН 300–350 Г/М² · ЦИФРОВАЯ ПЕЧАТЬ 4+0 · ПЛОТТЕРНАЯ РЕЗКА</text>
+<text x="45" y="267" font-family="Manrope" font-size="5.2px" font-weight="800" fill="#171619" text-anchor="start">ПЕРЕД ТИРАЖОМ: ВЛОЖИТЬ РЕАЛЬНЫЕ САШЕ, ПОДТВЕРДИТЬ ГЛУБИНУ И ЗАМЕНИТЬ QR + ЮРИДИЧЕСКИЙ БЛОК.</text>
+</g>
+</svg>
