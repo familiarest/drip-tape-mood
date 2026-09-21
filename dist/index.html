@@ -102,67 +102,48 @@
     h1 { max-width: 850px; margin: 0; font-family: Unbounded, sans-serif; font-size: clamp(2.5rem, 7vw, 6.5rem); line-height: .98; letter-spacing: -.055em; text-wrap: balance; overflow-wrap: anywhere; }
     .lead { max-width: 580px; margin: 24px 0 34px; color: rgba(255,255,255,.7); font-size: clamp(1rem, 2vw, 1.2rem); line-height: 1.55; }
 
-    .mood-carousel {
-      --wheel-size: min(720px, 90vw);
-      --wheel-bottom: clamp(-332px, -35vw, -248px);
-      position: relative;
-      width: min(900px, 100%);
-      flex: 1;
-      min-height: clamp(330px, 39vw, 430px);
-      margin: auto auto 0;
-    }
-    .moods {
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: var(--wheel-size);
-      min-height: 0;
-      overflow: hidden;
-      touch-action: pan-y;
-      user-select: none;
-      outline: none;
-    }
+    .mood-carousel { position: relative; width: min(680px, 100%); flex: 1; min-height: 470px; margin: auto auto 0; }
+    .moods { position: absolute; inset: 0 0 36px; min-height: 0; overflow: hidden; touch-action: pan-x; user-select: none; outline: none; perspective: 1100px; -webkit-mask-image: linear-gradient(to bottom, transparent 0, rgba(0,0,0,.28) 6%, #000 17%, #000 84%, rgba(0,0,0,.4) 94%, transparent 100%); mask-image: linear-gradient(to bottom, transparent 0, rgba(0,0,0,.28) 6%, #000 17%, #000 84%, rgba(0,0,0,.4) 94%, transparent 100%); }
     .moods.dragging { cursor: grabbing; }
     .mood {
       position: absolute;
-      bottom: var(--wheel-bottom);
+      top: 50%;
       left: 50%;
-      width: var(--wheel-size);
-      aspect-ratio: 1;
-      padding: 0;
+      width: min(530px, calc(100% - 44px));
+      aspect-ratio: 1.58;
+      padding: 15px;
       overflow: hidden;
-      border: 0;
-      border-radius: 50%;
-      background-color: #16161b;
-      background-position: center top;
-      background-size: cover;
+      border: 1px solid rgba(255,255,255,.3);
+      border-radius: 25px;
+      background: linear-gradient(145deg, color-mix(in srgb, var(--mood) 33%, #38383e), #111116 54%, #29292f);
+      box-shadow: 0 28px 65px rgba(0,0,0,.52), inset 0 1px 1px rgba(255,255,255,.28), inset 0 -2px 0 rgba(0,0,0,.55);
       cursor: pointer;
       text-align: left;
-      clip-path: url(#moodSector);
       transform-origin: 50% 50%;
-      will-change: transform, filter;
+      will-change: transform, filter, opacity;
       contain: layout paint;
     }
-    .mood::before { content: ''; position: absolute; z-index: 0; inset: 0; background: linear-gradient(180deg, rgba(4,4,7,.04) 5%, rgba(4,4,7,.25) 32%, rgba(4,4,7,.94) 53%); }
-    .mood::after { content: ''; position: absolute; z-index: 1; inset: 0; background: linear-gradient(60deg, transparent 49.55%, rgba(255,255,255,.34) 49.85% 50.15%, transparent 50.45%), linear-gradient(-60deg, transparent 49.55%, rgba(255,255,255,.34) 49.85% 50.15%, transparent 50.45%), repeating-radial-gradient(circle at 50% 50%, transparent 0 9px, rgba(255,255,255,.13) 10px, transparent 11px 15px); opacity: .62; }
-    .mood.is-center { filter: saturate(1.05) brightness(1.05); }
+    .mood::before { content: ''; position: absolute; inset: 7px; border: 1px solid rgba(255,255,255,.13); border-radius: 19px; pointer-events: none; }
+    .mood::after { content: ''; position: absolute; left: 8%; right: 8%; bottom: 8px; height: 3px; border-radius: 50%; background: rgba(0,0,0,.48); box-shadow: 0 -1px rgba(255,255,255,.08); }
+    .mood.is-center { filter: saturate(1.05) brightness(1.05); box-shadow: 0 34px 85px rgba(0,0,0,.6), 0 0 52px var(--glow), inset 0 1px 1px rgba(255,255,255,.3), inset 0 -2px 0 rgba(0,0,0,.55); }
     .mood:focus-visible { outline: 2px solid rgba(255,255,255,.9); outline-offset: 4px; }
-    .mood-face { position: absolute; z-index: 3; top: 7%; left: 50%; width: 38%; min-width: 180px; display: flex; flex-direction: column; align-items: flex-start; opacity: 0; transform: translateX(-50%) rotate(var(--counter-angle, 0deg)); transform-origin: 50% 50%; transition: opacity 240ms ease; }
-    .mood.is-center .mood-face { opacity: 1; }
-    .mood-num, .mood-copy, .mood-open { position: relative; z-index: 1; }
-    .mood-num { padding: 7px 9px; color: rgba(255,255,255,.86); border: 1px solid rgba(255,255,255,.17); border-radius: 999px; background: rgba(5,5,8,.28); backdrop-filter: blur(12px); font-size: .64rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
-    .mood-copy { width: 100%; margin-top: 25px; }
-    .mood strong { display: block; max-width: 100%; font: 600 clamp(1.04rem, 2vw, 1.5rem)/1.04 Unbounded, sans-serif; letter-spacing: -.04em; text-wrap: balance; }
-    .mood-copy small { display: block; margin-top: 8px; color: rgba(255,255,255,.68); font-size: .72rem; }
-    .mood-open { max-height: 0; margin-top: 0; overflow: hidden; color: rgba(255,255,255,.8); font-size: .68rem; opacity: 0; transition: max-height 360ms ease, margin 360ms ease, opacity 360ms ease; }
-    .mood.is-center .mood-open { max-height: 28px; margin-top: 13px; opacity: 1; }
-    .mood-nav { position: absolute; z-index: 8; top: 50%; width: 45px; height: 45px; display: grid; place-items: center; border: 1px solid rgba(255,255,255,.18); border-radius: 50%; background: rgba(10,10,13,.5); backdrop-filter: blur(14px); cursor: pointer; transform: translateY(-50%); transition: background 220ms ease, border-color 220ms ease; }
-    .mood-nav:hover { background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.3); }
-    .mood-nav.prev { left: 0; }
-    .mood-nav.next { right: 0; }
-    .moods::after { content: ''; position: absolute; z-index: 24; left: 50%; bottom: calc(var(--wheel-bottom) + var(--wheel-size) / 2 - 29px); width: 58px; aspect-ratio: 1; border: 1px solid rgba(255,255,255,.28); border-radius: 50%; background: radial-gradient(circle, #08080a 0 11%, #d8d7d2 12% 18%, #17171c 19% 47%, color-mix(in srgb, var(--a) 66%, #111116) 48% 70%, #0a0a0d 71%); box-shadow: 0 8px 24px rgba(0,0,0,.45), inset 0 1px rgba(255,255,255,.2); pointer-events: none; transform: translateX(-50%); }
-    .mood-carousel-foot { position: absolute; z-index: 30; left: 0; right: 0; bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 16px; min-height: 28px; color: rgba(255,255,255,.62); font-size: .72rem; text-shadow: 0 2px 8px rgba(0,0,0,.8); }
+    .cassette-label { position: relative; z-index: 1; height: 74%; padding: 15px 18px; overflow: hidden; border-radius: 15px 15px 10px 10px; background-position: center; background-size: cover; box-shadow: inset 0 0 0 1px rgba(255,255,255,.25); }
+    .cassette-label::before { content: ''; position: absolute; inset: 0; background: linear-gradient(125deg, rgba(7,7,10,.1), rgba(7,7,10,.78) 72%), linear-gradient(0deg, rgba(7,7,10,.84), transparent 55%); }
+    .cassette-head, .mood-face, .cassette-window, .cassette-foot { position: relative; z-index: 2; }
+    .cassette-head { display: flex; justify-content: space-between; color: rgba(255,255,255,.78); font-size: .62rem; font-weight: 800; letter-spacing: .16em; }
+    .mood-face { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; margin-top: 12px; }
+    .mood-num { display: block; color: rgba(255,255,255,.68); font-size: .61rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+    .mood strong { display: block; margin-top: 5px; font: 650 clamp(1.05rem, 2.3vw, 1.65rem)/1 Unbounded, sans-serif; letter-spacing: -.045em; }
+    .mood-tracks { max-width: 45%; color: rgba(255,255,255,.76); font-size: .7rem; line-height: 1.35; text-align: right; }
+    .cassette-window { width: 78%; height: 72px; margin: 12px auto 0; display: flex; align-items: center; justify-content: space-between; padding: 0 18px; border: 1px solid rgba(255,255,255,.28); border-radius: 999px; background: rgba(4,4,7,.78); box-shadow: inset 0 4px 14px rgba(0,0,0,.75); }
+    .mood-reel { width: 48px; aspect-ratio: 1; border: 5px solid rgba(241,238,230,.93); border-radius: 50%; background: repeating-conic-gradient(from 0deg, transparent 0 18deg, rgba(241,238,230,.9) 19deg 29deg, transparent 30deg 60deg), #17171b; box-shadow: 0 0 0 3px rgba(255,255,255,.12); }
+    .mood-reel::after { content: ''; display: block; width: 12px; aspect-ratio: 1; margin: 13px; border-radius: 50%; background: var(--mood); box-shadow: 0 0 0 3px #0d0d10; }
+    .mood.is-center .mood-reel { animation: reel-spin 8s linear infinite; }
+    .tape-strip { flex: 1; height: 10px; margin: 0 -3px; border-block: 2px solid rgba(255,255,255,.12); background: linear-gradient(90deg, var(--mood), var(--mood2)); }
+    .cassette-foot { height: 26%; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; color: rgba(255,255,255,.68); font-size: .62rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+    .mood-open { color: #fff; opacity: 0; transform: translateY(5px); transition: opacity 220ms ease, transform 220ms ease; }
+    .mood.is-center .mood-open { opacity: 1; transform: none; }
+    .mood-carousel-foot { position: absolute; z-index: 30; left: 0; right: 0; bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 16px; min-height: 28px; color: rgba(255,255,255,.62); font-size: .72rem; text-shadow: 0 2px 8px rgba(0,0,0,.8); }
     .mood-dots { display: flex; gap: 7px; }
     .mood-dot { width: 6px; height: 6px; padding: 0; border: 0; border-radius: 999px; background: rgba(255,255,255,.28); cursor: pointer; transition: width 300ms ease, background 300ms ease; }
     .mood-dot.active { width: 22px; background: #fff; }
@@ -312,6 +293,13 @@
     .dock-play svg { display: block; width: 18px; height: 18px; overflow: visible; fill: currentColor; }
     .dock-play:not(.is-playing) svg { transform: translateX(1px); }
 
+    @media (min-width: 900px) {
+      #moodScreen { padding-top: clamp(32px, 6vh, 68px); display: grid; grid-template-columns: minmax(330px, .88fr) minmax(520px, 1.12fr); grid-template-rows: auto auto 1fr; column-gap: clamp(28px, 4vw, 54px); align-items: start; }
+      #moodScreen .eyebrow { grid-column: 1; grid-row: 1; align-self: end; }
+      #moodScreen h1 { grid-column: 1; grid-row: 2; font-size: clamp(3rem, 4.7vw, 5rem); }
+      #moodScreen .lead { grid-column: 1; grid-row: 3; margin-bottom: 0; }
+      #moodScreen .mood-carousel { grid-column: 2; grid-row: 1 / 4; width: 100%; min-height: min(620px, calc(100svh - 112px)); margin: 0; align-self: stretch; }
+    }
     @media (max-width: 820px) {
       .content-grid { grid-template-columns: 1fr; }
       .steps { grid-template-columns: 1fr 1fr; }
@@ -327,15 +315,19 @@
       #moodScreen h1 { font-size: clamp(2.05rem, 10vw, 3rem); }
       .lead { margin: 16px 0 22px; font-size: .95rem; }
       #moodScreen { min-height: calc(100svh - 70px); }
-      .mood-carousel { --wheel-size: calc(100vw - 16px); --wheel-bottom: 0px; width: calc(100% + 28px); min-height: calc(100vw - 16px); margin-inline: -14px; }
-      .moods { height: var(--wheel-size); margin-inline: 0; }
-      .mood-face { top: 7%; width: 34%; min-width: 0; }
-      .mood-num { font-size: .58rem; }
-      .mood strong { font-size: clamp(.96rem, 4.3vw, 1.16rem); }
-      .mood-copy { margin-top: 25px; }
-      .mood-nav { width: 38px; height: 38px; }
-      .mood-nav.prev { left: -2px; }
-      .mood-nav.next { right: -2px; }
+      .mood-carousel { width: calc(100% + 28px); min-height: 390px; margin-inline: -14px; }
+      .moods { left: -30px; right: -30px; bottom: 34px; }
+      .mood { width: calc(100% - 98px); padding: 10px; border-radius: 20px; }
+      .cassette-label { padding: 11px 12px; border-radius: 11px 11px 8px 8px; }
+      .cassette-head { font-size: .52rem; }
+      .mood-face { margin-top: 8px; }
+      .mood-num { font-size: .51rem; }
+      .mood strong { font-size: clamp(.96rem, 5vw, 1.28rem); }
+      .mood-tracks { font-size: .59rem; }
+      .cassette-window { width: 82%; height: 54px; margin-top: 9px; padding-inline: 12px; }
+      .mood-reel { width: 36px; border-width: 4px; }
+      .mood-reel::after { width: 9px; margin: 9.5px; }
+      .cassette-foot { padding-inline: 10px; font-size: .52rem; }
       .experience { padding-top: 24px; }
       .experience-head { position: relative; display: block; }
       .experience-head .eyebrow { padding-right: 92px; }
@@ -364,9 +356,6 @@
   </style>
 </head>
 <body>
-  <svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute">
-    <defs><clipPath id="moodSector" clipPathUnits="objectBoundingBox"><path d="M .5 .5 L .066987 .25 A .5 .5 0 0 1 .933013 .25 Z"/></clipPath></defs>
-  </svg>
   <div class="mesh" aria-hidden="true"><i></i><i></i><i></i></div>
   <div class="noise" aria-hidden="true"></div>
   <main class="app">
@@ -384,7 +373,7 @@
         <div class="mood-carousel-foot">
           <span class="mood-count" id="moodCount">01 / 03</span>
           <div class="mood-dots" id="moodDots" aria-label="Позиция в списке"></div>
-          <span>Свайпни, чтобы листать</span>
+          <span>Свайпни вверх или вниз</span>
         </div>
       </div>
     </section>
@@ -508,7 +497,7 @@
     const audio = new Audio();
     audio.preload = 'metadata';
 
-    $('#moods').innerHTML = moods.map((m,i) => `<button class="mood" type="button" data-mood="${m.id}" data-index="${i}" style="--mood:${m.colors[0]};background-image:url('${m.artwork}')" aria-label="${m.name}. ${m.hint}"><span class="mood-face"><span class="mood-num">0${i+1} · ${m.hint}</span><span class="mood-copy"><strong>${m.name}</strong></span><span class="mood-open">Открыть настроение ↗</span></span></button>`).join('');
+    $('#moods').innerHTML = moods.map((m,i) => `<button class="mood" type="button" data-mood="${m.id}" data-index="${i}" style="--mood:${m.colors[0]};--mood2:${m.colors[1]}" aria-label="${m.name}. ${m.hint}"><span class="cassette-label" style="background-image:url('${m.artwork}')"><span class="cassette-head"><span>KAVABANGA</span><span>SIDE A · 0${i+1}</span></span><span class="mood-face"><span><span class="mood-num">${m.hint}</span><strong>${m.name}</strong></span><span class="mood-tracks">${m.tracks.map(track=>track.title).join(' / ')}</span></span><span class="cassette-window"><i class="mood-reel"></i><i class="tape-strip"></i><i class="mood-reel"></i></span></span><span class="cassette-foot"><span>DRIP TAPE · 0${i+1}</span><span class="mood-open">Открыть ↗</span></span></button>`).join('');
     $('#moodDots').innerHTML = moods.map((_,i) => `<button class="mood-dot" type="button" data-dot="${i}" aria-label="Настроение ${i+1}"></button>`).join('');
     $('#steps').innerHTML = stepsData.map((s,i) => `<button class="step ${i===0?'active':''}" type="button" data-step="${i}"><span class="step-index">${i+1}</span><h3>${s[0]}</h3><p>${s[1]}</p></button>`).join('');
     renderPlaylist();
@@ -526,23 +515,22 @@
       const half=moods.length/2;
       return ((value+half)%moods.length+moods.length)%moods.length-half;
     }
-    function carouselSpacing() {
-      return Math.min($('#moods').getBoundingClientRect().width*.34,window.innerWidth<560?132:190);
-    }
+    function carouselSpacing() { return window.innerWidth<560?228:300; }
     function renderMoodCarousel(progress=carouselProgress) {
       const previewCenter=wrapMoodIndex(activeMoodIndex+Math.round(progress));
       $$('.mood').forEach((card,index)=>{
         const offset=circularMoodOffset(index-activeMoodIndex-progress);
         const distance=Math.min(1.5,Math.abs(offset));
-        const angle=offset*(360/moods.length);
         const fade=Math.min(1,distance);
-        const brightness=1-fade*.52;
-        const saturation=1-fade*.38;
-        card.style.transform=`translateX(-50%) rotate(${angle.toFixed(2)}deg)`;
-        card.style.opacity=(1-fade*.52).toFixed(3);
-        card.style.filter=`saturate(${Math.max(.55,saturation).toFixed(3)}) brightness(${Math.max(.45,brightness).toFixed(3)})`;
-        card.style.zIndex=String(index===previewCenter?12:10);
-        $('.mood-face',card).style.setProperty('--counter-angle',`${(-angle).toFixed(2)}deg`);
+        const brightness=1-fade*.46;
+        const saturation=1-fade*.3;
+        const y=offset*carouselSpacing();
+        const scale=1-fade*.12;
+        const tilt=offset*-1.8;
+        card.style.transform=`translate(-50%, calc(-50% + ${y.toFixed(2)}px)) scale(${scale.toFixed(3)}) rotate(${tilt.toFixed(2)}deg)`;
+        card.style.opacity=(1-fade*.5).toFixed(3);
+        card.style.filter=`saturate(${Math.max(.62,saturation).toFixed(3)}) brightness(${Math.max(.54,brightness).toFixed(3)})`;
+        card.style.zIndex=String(index===previewCenter?12:Math.max(1,10-Math.round(distance*2)));
         const isCenter=index===previewCenter;
         card.classList.toggle('is-center',isCenter);
         card.setAttribute('aria-current',index===activeMoodIndex&&Math.abs(progress)<.001?'true':'false');
@@ -716,23 +704,23 @@
     function closeSheet(el) { el.classList.remove('open'); el.setAttribute('aria-hidden','true'); }
 
     const moodStage=$('#moods');
-    let dragStartX=0, dragDelta=0, dragPointerId=null, dragVelocity=0, dragLastX=0, dragLastTime=0, suppressMoodClick=false;
+    let dragStartY=0, dragDelta=0, dragPointerId=null, dragVelocity=0, dragLastY=0, dragLastTime=0, suppressMoodClick=false;
     moodStage.addEventListener('pointerdown',e=>{
       if(carouselAnimating||(e.pointerType==='mouse'&&e.button!==0))return;
       dragPointerId=e.pointerId;
-      dragStartX=e.clientX;
-      dragLastX=e.clientX;
+      dragStartY=e.clientY;
+      dragLastY=e.clientY;
       dragLastTime=performance.now();
       dragVelocity=0;
       dragDelta=0;
     });
     moodStage.addEventListener('pointermove',e=>{
       if(e.pointerId!==dragPointerId)return;
-      dragDelta=e.clientX-dragStartX;
+      dragDelta=e.clientY-dragStartY;
       const now=performance.now();
       const elapsed=Math.max(1,now-dragLastTime);
-      dragVelocity=(e.clientX-dragLastX)/elapsed;
-      dragLastX=e.clientX;
+      dragVelocity=(e.clientY-dragLastY)/elapsed;
+      dragLastY=e.clientY;
       dragLastTime=now;
       if(Math.abs(dragDelta)>4){
         e.preventDefault();
@@ -764,8 +752,8 @@
       else animateCarousel(circularMoodOffset(index-activeMoodIndex));
     });
     $('#moods').addEventListener('keydown',e=>{
-      if(e.key==='ArrowLeft'){ e.preventDefault(); moveCarousel(-1); }
-      if(e.key==='ArrowRight'){ e.preventDefault(); moveCarousel(1); }
+      if(e.key==='ArrowUp'){ e.preventDefault(); moveCarousel(-1); }
+      if(e.key==='ArrowDown'){ e.preventDefault(); moveCarousel(1); }
       if((e.key==='Enter'||e.key===' ') && e.target===$('#moods')){ e.preventDefault(); openExperience(moods[activeMoodIndex].id); }
     });
     $('#moodDots').addEventListener('click',e=>{ const dot=e.target.closest('[data-dot]'); if(dot&&!carouselAnimating) animateCarousel(circularMoodOffset(Number(dot.dataset.dot)-activeMoodIndex)); });

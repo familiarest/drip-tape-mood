@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="297mm" height="210mm" viewBox="0 0 297 210">
+<title>A4 cassette shape mockup 120 x 90 x 16 mm</title>
+<rect width="297" height="210" fill="white"/>
+<g id="CUT" fill="none" stroke="#000" stroke-width="0.35" stroke-linejoin="round"><polyline points="10,60 13,30 127,30 130,60"/><polyline points="130,60 132,37 144,37 146,60"/><polyline points="146,60 149,30 263,30 266,60"/><polyline points="266,60 268,37 280,37 282,60"/><polyline points="10,150 13,180 127,180 130,150"/><polyline points="130,150 132,173 144,173 146,150"/><polyline points="146,150 149,180 263,180 266,150"/><polyline points="266,150 268,173 280,173 282,150"/><polyline points="10,60 10,150"/><polyline points="282,60 289,63 289,147 282,150"/></g>
+<g id="FOLD" fill="none" stroke="#e1261c" stroke-width="0.28" stroke-dasharray="4 2"><polyline points="10,60 282,60"/><polyline points="10,150 282,150"/><polyline points="130,60 130,150"/><polyline points="146,60 146,150"/><polyline points="266,60 266,150"/><polyline points="282,60 282,150"/></g>
+<g id="GUIDES" fill="#a0a0a0" font-family="Arial,sans-serif" font-size="3.2" text-anchor="middle">
+<text x="70" y="105">FRONT 120 x 90</text><text x="138" y="105">SIDE 16</text><text x="206" y="105">BACK 120 x 90</text><text x="274" y="105">SIDE 16</text>
+<text x="293" y="105" transform="rotate(90 293 105)">GLUE 7</text>
+<text x="148.5" y="202">A4 landscape | 100% | cassette shape mockup, not sized for drips</text></g>
+</svg>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="297mm" height="210mm" viewBox="0 0 297 210">
+  <title>A4 drip box prototype dieline 106 × 132 × 26 mm</title>
+  <desc>Print landscape at 100 percent. Solid black is cut; dashed red is fold.</desc>
+  <rect width="297" height="210" fill="white" />
+  <g id="CUT" fill="none" stroke="#000000" stroke-width="0.35" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="13,39 15,17 117,17 119,39" />
+    <polyline points="119,39 122,21 142,21 145,39" />
+    <polyline points="145,39 147,17 249,17 251,39" />
+    <polyline points="251,39 254,21 274,21 277,39" />
+    <polyline points="13,171 15,193 117,193 119,171" />
+    <polyline points="119,171 122,189 142,189 145,171" />
+    <polyline points="145,171 147,193 249,193 251,171" />
+    <polyline points="251,171 254,189 274,189 277,171" />
+    <polyline points="13,39 13,171" />
+    <polyline points="277,39 284,42 284,168 277,171" />
+  </g>
+  <g id="FOLD" fill="none" stroke="#e1261c" stroke-width="0.28" stroke-dasharray="4 2">
+    <polyline points="13,39 277,39" />
+    <polyline points="13,171 277,171" />
+    <polyline points="119,39 119,171" />
+    <polyline points="145,39 145,171" />
+    <polyline points="251,39 251,171" />
+    <polyline points="277,39 277,171" />
+  </g>
+  <g id="GUIDES" fill="#a6a6a6" font-family="Arial, sans-serif" font-size="3.2">
+    <text x="66" y="105" text-anchor="middle">FRONT 106 × 132</text>
+    <text x="132" y="105" text-anchor="middle">SIDE 26</text>
+    <text x="198" y="105" text-anchor="middle">BACK 106 × 132</text>
+    <text x="264" y="105" text-anchor="middle">SIDE 26</text>
+    <text x="280.5" y="105" text-anchor="middle" transform="rotate(90 280.5 105)">GLUE 7</text>
+    <line x1="13" y1="204" x2="23" y2="204" stroke="#000" stroke-width="0.35" />
+    <text x="25" y="205">CUT</text>
+    <line x1="45" y1="204" x2="55" y2="204" stroke="#e1261c" stroke-width="0.28" stroke-dasharray="4 2" />
+    <text x="57" y="205">FOLD</text>
+    <text x="284" y="205" text-anchor="end">A4 landscape • 100% • finished 106 × 132 × 26 mm</text>
+  </g>
+</svg>
