@@ -316,18 +316,19 @@
       .lead { margin: 16px 0 22px; font-size: .95rem; }
       #moodScreen { min-height: calc(100svh - 70px); }
       .mood-carousel { width: calc(100% + 28px); min-height: 390px; margin-inline: -14px; }
-      .moods { left: -30px; right: -30px; bottom: 34px; }
-      .mood { width: calc(100% - 98px); padding: 10px; border-radius: 20px; }
-      .cassette-label { padding: 11px 12px; border-radius: 11px 11px 8px 8px; }
+      .moods { left: -80px; right: -80px; bottom: 34px; }
+      .mood { width: calc(100% - 198px); padding: 10px; border-radius: 20px; box-shadow: none; }
+      .mood.is-center { box-shadow: 0 18px 44px rgba(0,0,0,.42), 0 0 34px var(--glow), inset 0 1px 1px rgba(255,255,255,.28), inset 0 -2px 0 rgba(0,0,0,.55); }
+      .cassette-label { padding: 12px 20px; border-radius: 11px 11px 8px 8px; }
       .cassette-head { font-size: .52rem; }
       .mood-face { margin-top: 8px; }
       .mood-num { font-size: .51rem; }
       .mood strong { font-size: clamp(.96rem, 5vw, 1.28rem); }
-      .mood-tracks { font-size: .59rem; }
+      .mood-tracks { max-width: 40%; font-size: .59rem; }
       .cassette-window { width: 82%; height: 54px; margin-top: 9px; padding-inline: 12px; }
       .mood-reel { width: 36px; border-width: 4px; }
       .mood-reel::after { width: 9px; margin: 9.5px; }
-      .cassette-foot { padding-inline: 10px; font-size: .52rem; }
+      .cassette-foot { padding-inline: 20px; font-size: .52rem; }
       .experience { padding-top: 24px; }
       .experience-head { position: relative; display: block; }
       .experience-head .eyebrow { padding-right: 92px; }
